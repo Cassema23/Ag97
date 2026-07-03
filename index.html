@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="pt-AO">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Sistema de Gestão Escutista do Agrupamento 97 da IECA – Rev. José Belo Chipenda. Gerir escuteiros, dirigentes, secções, áreas de desenvolvimento e finanças do agrupamento.">
+<meta name="keywords" content="Escuteiros, IECA, Agrupamento 97, Gestão Escutista, Secções, Lobitinhos, Exploradores, Caminheiros, Dirigentes, Tesouraria, Secretaria">
+<meta   name="author" content="Agrupamento 97 · IECA – Rev. José Belo Chipenda">
+<meta name="robots" content="index, follow">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>Agrupamento 97 · IECA – Rev. José Belo Chipenda</title>
+<link rel="icon" type="image/jpeg" href="logo.jpeg">
+<style>
+  :root{
+    --lilas: #7030A0;
+    --lilas-escuro: #4A1D6E;
+    --lilas-suave: #F3EAFB;
+    --dourado: #E0A335;
+    --branco: #FFFFFF;
+    --texto: #2B2233;
+    --texto-suave: #6E6178;
+    --linha: #E4D9F2;
+    --erro: #C0392B;
+    --ok: #2E8B57;
+    --font-display: 'Poppins', 'Segoe UI', sans-serif;
+    --font-body: 'Inter', 'Segoe UI', sans-serif;
+    --font-mono: 'Fira Code', 'Consolas', monospace;
+    --raio: 14px;
+    --sombra: 0 8px 24px rgba(74,29,110,0.10);
+  }
+
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    font-family: var(--font-body);
+    background: var(--lilas-suave);
+    color: var(--texto);
+    min-height:100vh;
+    display:flex;
+  }
+
+  /* ===== SIDEBAR ===== */
+  .sidebar{
+    width:250px;
+    background: linear-gradient(180deg, var(--lilas-escuro), var(--lilas));
+    color:var(--branco);
+    display:flex;
+    flex-direction:column;
+    position:fixed;
+    top:0; left:0; bottom:0;
+    z-index:50;
+    transition: transform .3s ease;
+  }
+  .brand{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:22px 18px;
+    border-bottom:1px solid rgba(255,255,255,0.15);
+  }
+  .brand .logo-img{flex-shrink:0; width:44px; height:44px; object-fit:cover; border-radius:50%; background:var(--branco); border:2px solid rgba(255,255,255,0.6);}
+  .brand-text{line-height:1.15;}
+  .brand-text .num{font-family:var(--font-display); font-weight:700; font-size:1.05rem; letter-spacing:.5px;}
+  .brand-text .sub{font-size:.68rem; opacity:.8; text-transform:uppercase; letter-spacing:.6px;}
+
+  nav.menu{flex:1; padding:14px 10px; overflow-y:auto;}
+  .menu-label{font-size:.68rem; text-transform:uppercase; letter-spacing:.8px; opacity:.6; padding:14px 12px 6px;}
+  .menu button{
+    width:100%;
+    text-align:left;
+    background:transparent;
+    border:none;
+    color:rgba(255,255,255,0.88);
+    font-family:var(--font-body);
+    font-size:.9rem;
+    padding:10px 12px;
+    border-radius:10px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    cursor:pointer;
+    transition:.15s;
+    margin-bottom:2px;
+  }
+  .menu button:hover{background:rgba(255,255,255,0.10);}
+  .menu button.active{background:var(--branco); color:var(--lilas-escuro); font-weight:600;}
+  .menu button .ico{width:18px; text-align:center; font-size:1rem;}
+
+  .sidebar-foot{
+    padding:14px 18px;
+    font-size:.68rem;
+    opacity:.65;
+    border-top:1px solid rgba(255,255,255,0.15);
+  }
+
+  /* ===== MAIN ===== */
+  .main{margin-left:250px; flex:1; min-height:100vh;}
+  .topbar{
+    background:var(--branco);
+    padding:16px 32px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    border-bottom:1px solid var(--linha);
+    position:sticky; top:0; z-index:40;
+  }
+  .topbar h1{font-family:var(--font-display); font-size:1.15rem; color:var(--lilas-escuro);}
+  .topbar .data-hoje{font-size:.8rem; color:var(--texto-suave);}
+  .menu-toggle{display:none; background:none; border:none; font-size:1.4rem; color:var(--lilas-escuro); cursor:pointer;}
+
+  .conteudo{padding:32px; max-width:1180px;}
+  .pagina{display:none; animation: entra .35s ease;}
+  .pagina.active{display:block;}
+  @keyframes entra{from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);}}
+
+  /* ===== HOME ===== */
+  .hero{
+    background: linear-gradient(120deg, var(--lilas) 0%, var(--lilas-escuro) 100%);
+    border-radius: 22px;
+    padding: 46px 40px;
+    color:var(--branco);
+    position:relative;
+    overflow:hidden;
+    margin-bottom:30px;
+  }
+  .hero::after{
+    content:"";
+    position:absolute; right:-60px; top:-60px;
+    width:260px; height:260px;
+    background: radial-gradient(circle, rgba(224,163,53,0.35), transparent 70%);
+  }
+  .hero .logo-marca{
+    position:absolute; right:34px; top:50%; transform:translateY(-50%);
+    width:130px; height:130px; border-radius:50%;
+    object-fit:cover; border:4px solid rgba(255,255,255,0.85);
+    box-shadow:0 10px 26px rgba(0,0,0,0.25);
+  }
+  @media (max-width:760px){ .hero .logo-marca{display:none;} }
+  .hero .eyebrow{font-size:.75rem; letter-spacing:1.5px; text-transform:uppercase; opacity:.8; margin-bottom:8px;}
+  .hero h2{font-family:var(--font-display); font-size:2rem; margin-bottom:10px; max-width:640px;}
+  .hero p{max-width:560px; opacity:.92; line-height:1.55; font-size:.95rem;}
+
+  .trilha{
+    display:flex;
+    gap:14px;
+    margin-top:28px;
+    flex-wrap:wrap;
+  }
+  .trilha .etapa{
+    background:rgba(255,255,255,0.12);
+    border:1px solid rgba(255,255,255,0.25);
+    border-radius:12px;
+    padding:10px 14px;
+    font-size:.78rem;
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .trilha .etapa b{font-family:var(--font-mono); color:var(--dourado);}
+
+  .atalhos{display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:16px; margin-bottom:10px;}
+  .atalho-card{
+    background:var(--branco);
+    border-radius:var(--raio);
+    padding:20px;
+    box-shadow:var(--sombra);
+    cursor:pointer;
+    transition:.2s;
+    border:1px solid var(--linha);
+  }
+  .atalho-card:hover{transform:translateY(-3px); border-color:var(--lilas);}
+  .atalho-card .ico{font-size:1.5rem; margin-bottom:8px;}
+  .atalho-card h3{font-family:var(--font-display); font-size:.95rem; margin-bottom:4px; color:var(--lilas-escuro);}
+  .atalho-card p{font-size:.78rem; color:var(--texto-suave);}
+
+  /* ===== SECÇÃO GENÉRICA ===== */
+  .cabecalho-pagina{display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:22px; flex-wrap:wrap; gap:10px;}
+  .cabecalho-pagina h2{font-family:var(--font-display); font-size:1.4rem; color:var(--lilas-escuro);}
+  .cabecalho-pagina p{color:var(--texto-suave); font-size:.85rem; margin-top:4px;}
+
+  .btn{
+    background:var(--lilas);
+    color:var(--branco);
+    border:none;
+    padding:10px 18px;
+    border-radius:10px;
+    font-size:.85rem;
+    font-weight:600;
+    cursor:pointer;
+    transition:.15s;
+  }
+  .btn:hover{background:var(--lilas-escuro);}
+  .btn.dourado{background:var(--dourado); color:var(--texto);}
+  .btn.dourado:hover{background:#c98d24;}
+  .btn.secundario{background:var(--branco); color:var(--lilas); border:1.5px solid var(--lilas);}
+  .btn.pequeno{padding:6px 12px; font-size:.75rem;}
+  .btn.perigo{background:var(--erro);}
+  .btn.perigo:hover{background:#a03528;}
+
+  .cartao{background:var(--branco); border-radius:var(--raio); box-shadow:var(--sombra); border:1px solid var(--linha); overflow:hidden;}
+
+  table{width:100%; border-collapse:collapse; font-size:.85rem;}
+  thead{background:var(--lilas-suave);}
+  th{text-align:left; padding:12px 16px; color:var(--lilas-escuro); font-weight:600; font-size:.75rem; text-transform:uppercase; letter-spacing:.4px;}
+  td{padding:12px 16px; border-top:1px solid var(--linha);}
+  tbody tr:hover{background:#FBF8FE;}
+  .acoes-linha{display:flex; gap:6px;}
+
+  .badge{padding:4px 10px; border-radius:20px; font-size:.72rem; font-weight:600; display:inline-block;}
+  .badge.lobitinhos{background:#FDECE3; color:#C0622B;}
+  .badge.juniores{background:#E3F1FD; color:#2470A8;}
+  .badge.seniores{background:#EAFBEF; color:#2E8B57;}
+  .badge.caminheiros{background:#F3EAFB; color:var(--lilas-escuro);}
+  .badge.dirigentes{background:#FEF6E0; color:#A87B12;}
+  .badge.ativo{background:#EAFBEF; color:var(--ok);}
+  .badge.pendente{background:#FEF3E0; color:#B9770E;}
+  .badge.pago{background:#EAFBEF; color:var(--ok);}
+
+  .grid-secoes{display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:18px; margin-bottom:26px;}
+  .secao-card{background:var(--branco); border-radius:var(--raio); box-shadow:var(--sombra); padding:22px; border-top:5px solid var(--lilas);}
+  .secao-card.lobitinhos{border-color:#E0793A;}
+  .secao-card.juniores{border-color:#2E8FCB;}
+  .secao-card.seniores{border-color:#2E8B57;}
+  .secao-card.caminheiros{border-color:var(--lilas);}
+  .secao-card.dirigentes{border-color:var(--dourado);}
+  .secao-card h3{font-family:var(--font-display); font-size:1rem; margin-bottom:4px; color:var(--texto);}
+  .secao-card .faixa{font-family:var(--font-mono); font-size:.78rem; color:var(--texto-suave); margin-bottom:10px;}
+  .secao-card .contagem{font-size:1.8rem; font-weight:700; font-family:var(--font-display); color:var(--lilas-escuro);}
+  .secao-card .contagem span{font-size:.75rem; font-weight:400; color:var(--texto-suave); font-family:var(--font-body);}
+
+  form.formulario{background:var(--branco); border-radius:var(--raio); box-shadow:var(--sombra); padding:26px; border:1px solid var(--linha); margin-bottom:26px; display:none;}
+  form.formulario.aberto{display:grid; grid-template-columns:1fr 1fr; gap:16px;}
+  form.formulario .campo-full{grid-column:1/-1;}
+  form.formulario label{display:block; font-size:.78rem; font-weight:600; color:var(--texto-suave); margin-bottom:6px;}
+  form.formulario input, form.formulario select{
+    width:100%; padding:10px 12px; border-radius:8px; border:1.5px solid var(--linha);
+    font-family:var(--font-body); font-size:.88rem; color:var(--texto); background:#FBFAFD;
+  }
+  form.formulario input:focus, form.formulario select:focus{outline:none; border-color:var(--lilas);}
+  form.formulario input:invalid{border-color:var(--erro);}
+  form.formulario .acoes-form{grid-column:1/-1; display:flex; gap:10px; justify-content:flex-end; margin-top:6px;}
+
+  .toolbar{display:flex; gap:10px; margin-bottom:18px; flex-wrap:wrap; align-items:center;}
+  .toolbar input[type=text]{padding:9px 14px; border-radius:8px; border:1.5px solid var(--linha); font-size:.85rem; min-width:220px; background:var(--branco);}
+
+  .areas-lista{display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:16px;}
+  .area-card{background:var(--branco); border-radius:var(--raio); box-shadow:var(--sombra); padding:18px; border-left:5px solid var(--dourado);}
+  .area-card h4{font-family:var(--font-display); font-size:.92rem; color:var(--lilas-escuro); margin-bottom:6px;}
+  .area-card p{font-size:.8rem; color:var(--texto-suave); line-height:1.5;}
+
+  .resumo-financeiro{display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:16px; margin-bottom:22px;}
+  .resumo-item{background:var(--branco); border-radius:var(--raio); box-shadow:var(--sombra); padding:18px;}
+  .resumo-item .rotulo{font-size:.72rem; text-transform:uppercase; letter-spacing:.5px; color:var(--texto-suave); margin-bottom:6px;}
+  .resumo-item .valor{font-family:var(--font-display); font-size:1.4rem; color:var(--lilas-escuro); font-weight:700;}
+  .resumo-item.receber .valor{color:var(--erro);}
+
+  .vazio{padding:40px; text-align:center; color:var(--texto-suave); font-size:.88rem;}
+
+  .alerta{
+    padding:12px 16px;
+    border-radius:8px;
+    margin-bottom:16px;
+    font-size:.85rem;
+    display:none;
+  }
+  .alerta.sucesso{background:#EAFBEF; color:var(--ok); border-left:4px solid var(--ok); display:block;}
+  .alerta.erro{background:#FCE3E3; color:var(--erro); border-left:4px solid var(--erro); display:block;}
+  .alerta.info{background:#E3F1FD; color:#2470A8; border-left:4px solid #2470A8; display:block;}
+
+  .modal{display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:100; align-items:center; justify-content:center;}
+  .modal.aberto{display:flex;}
+  .modal-conteudo{background:var(--branco); border-radius:var(--raio); padding:26px; max-width:400px; width:90%; box-shadow:0 20px 60px rgba(0,0,0,0.3);}
+  .modal-conteudo h3{font-family:var(--font-display); margin-bottom:12px; color:var(--lilas-escuro);}
+  .modal-conteudo p{font-size:.9rem; color:var(--texto-suave); margin-bottom:20px;}
+  .modal-acoes{display:flex; gap:10px; justify-content:flex-end;}
+
+  footer.rodape{padding:24px 32px; text-align:center; font-size:.75rem; color:var(--texto-suave);}
+
+  ::placeholder{color:#B7A9C9;}
+
+  @media (max-width:920px){
+    .sidebar{transform:translateX(-100%);}
+    .sidebar.aberta{transform:translateX(0);}
+    .main{margin-left:0;}
+    .menu-toggle{display:block;}
+    form.formulario.aberto{grid-template-columns:1fr;}
+    .acoes-linha{flex-direction:column;}
+  }
+</style>
+</head>
+<body>
+
+<!-- ===================== SIDEBAR ===================== -->
+<aside class="sidebar" id="sidebar">
+  <div class="brand">
+    <img src="https://scontent.flad7-1.fna.fbcdn.net/v/t39.30808-6/738271030_27415498748121635_5504532128612609037_n.jpg?stp=dst-jpg_tt6&cstp=mx640x640&ctp=p526x296&_nc_cat=105&ccb=1-7&_nc_sid=aa7b47&_nc_eui2=AeHB34hnlWBpqU7_Cmcp5C0gj8yVwZA1lKiPzJXBkDWUqBvWpxy_biISqmmo7dm50KVpGb4WHxClKgwvB9-ezy49&_nc_ohc=HyJKnMHNqywQ7kNvwEdNUH7&_nc_oc=AdqoWqQoJV1MtXl7leGVJEB-nX-bQ1uyghWr6pGsXnlZy8T9_RZBo6YlvmWmc9x2rwk&_nc_zt=23&_nc_ht=scontent.flad7-1.fna&_nc_gid=vizwg9Mpzp-HRnM209FUPg&_nc_ss=7c2a8&oh=00_AQAtzOxfVplOY8n6wL1E8godO55LKk8KOQVzHXQ3xhxRhw&oe=6A4DB53F" width="100%" alt="Logo do Agrupamento 97" class="logo-img">
+    <div class="brand-text">
+      <div class="num">Agrupamento 97</div>
+      <div class="sub">IECA · Rev. José Belo Chipenda</div>
+    </div>
+  </div>
+
+  <nav class="menu">
+    <div class="menu-label">Principal</div>
+    <button data-page="home" class="active" aria-label="Ir para página inicial"><span class="ico">🏠</span>Início</button>
+
+    <div class="menu-label">Movimento</div>
+    <button data-page="escuteiros" aria-label="Gerir escuteiros"><span class="ico">🧭</span>Escuteiros</button>
+    <button data-page="dirigentes" aria-label="Gerir dirigentes"><span class="ico">🎖️</span>Dirigentes</button>
+    <button data-page="secoes" aria-label="Ver secções"><span class="ico">⛺</span>Secções</button>
+    <button data-page="areas" aria-label="Ver áreas de desenvolvimento"><span class="ico">🌟</span>Áreas de Desenvolvimento</button>
+
+    <div class="menu-label">Administração</div>
+    <button data-page="secretaria" aria-label="Cadastramento de membros"><span class="ico">🗂️</span>Secretaria</button>
+    <button data-page="tesouraria" aria-label="Gestão financeira"><span class="ico">💰</span>Tesouraria</button>
+  </nav>
+
+  <div class="sidebar-foot">© 2026 Agrupamento 97 — IECA<br>Rev. José Belo Chipenda</div>
+</aside>
+
+<!-- ===================== MAIN ===================== -->
+<div class="main">
+  <div class="topbar">
+    <div style="display:flex; align-items:center; gap:12px;">
+      <button class="menu-toggle" id="menuToggle" aria-label="Abrir menu">☰</button>
+      <h1 id="tituloPagina">Início</h1>
+    </div>
+    <div class="data-hoje" id="dataHoje"></div>
+  </div>
+
+  <div class="conteudo">
+
+    <!-- ===================== HOME ===================== -->
+    <section class="pagina active" id="page-home">
+      <div class="hero">
+        <img src="https://scontent.flad7-1.fna.fbcdn.net/v/t39.30808-6/738271030_27415498748121635_5504532128612609037_n.jpg?stp=dst-jpg_tt6&cstp=mx640x640&ctp=p526x296&_nc_cat=105&ccb=1-7&_nc_sid=aa7b47&_nc_eui2=AeHB34hnlWBpqU7_Cmcp5C0gj8yVwZA1lKiPzJXBkDWUqBvWpxy_biISqmmo7dm50KVpGb4WHxClKgwvB9-ezy49&_nc_ohc=HyJKnMHNqywQ7kNvwEdNUH7&_nc_oc=AdqoWqQoJV1MtXl7leGVJEB-nX-bQ1uyghWr6pGsXnlZy8T9_RZBo6YlvmWmc9x2rwk&_nc_zt=23&_nc_ht=scontent.flad7-1.fna&_nc_gid=vizwg9Mpzp-HRnM209FUPg&_nc_ss=7c2a8&oh=00_AQAtzOxfVplOY8n6wL1E8godO55LKk8KOQVzHXQ3xhxRhw&oe=6A4DB53F" width="100%" alt="https://scontent.flad7-1.fna.fbcdn.net/v/t39.30808-6/738271030_27415498748121635_5504532128612609037_n.jpg?stp=dst-jpg_tt6&cstp=mx640x640&ctp=p526x296&_nc_cat=105&ccb=1-7&_nc_sid=aa7b47&_nc_eui2=AeHB34hnlWBpqU7_Cmcp5C0gj8yVwZA1lKiPzJXBkDWUqBvWpxy_biISqmmo7dm50KVpGb4WHxClKgwvB9-ezy49&_nc_ohc=HyJKnMHNqywQ7kNvwEdNUH7&_nc_oc=AdqoWqQoJV1MtXl7leGVJEB-nX-bQ1uyghWr6pGsXnlZy8T9_RZBo6YlvmWmc9x2rwk&_nc_zt=23&_nc_ht=scontent.flad7-1.fna&_nc_gid=vizwg9Mpzp-HRnM209FUPg&_nc_ss=7c2a8&oh=00_AQAtzOxfVplOY8n6wL1E8godO55LKk8KOQVzHXQ3xhxRhw&oe=6A4DB53F" class="logo-marca">
+        <div class="eyebrow">Bem-vindo(a) ao</div>
+        <h2>Agrupamento 97 – IECA<br>Rev. José Belo Chipenda</h2>
+        <p>Um espaço de formação de caráter, fé e cidadania, acompanhando cada Escuteiro desde os Lobitinhos até aos Caminheiros. Aqui geres secções, cadastros, dirigentes e finanças do agrupamento num só lugar.</p>
+        <div class="trilha">
+          <div class="etapa">🐺 <b>2–9</b> Lobitinhos</div>
+          <div class="etapa">🧭 <b>10–13</b> Exploradores Júniores</div>
+          <div class="etapa">🏕️ <b>14–17</b> Exploradores Seniores</div>
+          <div class="etapa">🎒 <b>18–23</b> Caminheiros</div>
+        </div>
+      </div>
+
+      <div class="cabecalho-pagina"><h2>Atalhos rápidos</h2></div>
+      <div class="atalhos">
+        <div class="atalho-card" data-page="escuteiros"><div class="ico">🧭</div><h3>Escuteiros</h3><p>Consultar e cadastrar Escuteiros de todas as secções.</p></div>
+        <div class="atalho-card" data-page="dirigentes"><div class="ico">🎖️</div><h3>Dirigentes</h3><p>Gerir os adultos responsáveis por cada secção.</p></div>
+        <div class="atalho-card" data-page="secretaria"><div class="ico">🗂️</div><h3>Secretaria</h3><p>Novo cadastramento e inscrição no movimento.</p></div>
+        <div class="atalho-card" data-page="tesouraria"><div class="ico">💰</div><h3>Tesouraria</h3><p>Inscrições, mensalidades e pagamentos de atividades.</p></div>
+      </div>
+    </section>
+
+    <!-- ===================== ESCUTEIROS ===================== -->
+    <section class="pagina" id="page-escuteiros">
+      <div id="alerta-escuteiros" class="alerta"></div>
+      <div class="cabecalho-pagina">
+        <div><h2>Escuteiros</h2><p>Todos os membros do agrupamento, dos Lobitinhos aos Caminheiros.</p></div>
+        <button class="btn" onclick="toggleForm('form-escuteiro)" aria-label="Adicionar novo escuteiro">+ Novo Escuteiro</button>
+      </div>
+
+      <form class="formulario" id="form-escuteiro" onsubmit="adicionarEscuteiro(event)">
+        <div><label for="esc-nome">Nome completo</label><input required id="esc-nome" type="text" placeholder="Nome do Escuteiro"></div>
+        <div><label for="esc-nasc">Data de nascimento</label><input required id="esc-nasc" type="date"></div>
+        <div><label for="esc-enc">Encarregado de Educação</label><input required id="esc-enc" type="text" placeholder="Nome do encarregado"></div>
+        <div><label for="esc-contacto">Contacto</label><input required id="esc-contacto" type="tel" placeholder="Nº de telefone (ex: 923 111 222)"></div>
+        <div class="campo-full acoes-form">
+          <button type="button" class="btn secundario" onclick="toggleForm('form-escuteiro')">Cancelar</button>
+          <button type="submit" class="btn dourado">Guardar Escuteiro</button>
+        </div>
+      </form>
+
+      <div class="toolbar">
+        <input type="text" id="filtro-escuteiro" placeholder="Pesquisar por nome..." oninput="renderEscuteiros()">
+        <select id="filtro-secao-escuteiro" onchange="renderEscuteiros()">
+          <option value="">Todas as secções</option>
+          <option value="Lobitinhos">Lobitinhos</option>
+          <option value="Exploradores Júniores">Exploradores Júniores</option>
+          <option value="Exploradores Seniores">Exploradores Seniores</option>
+          <option value="Caminheiros">Caminheiros</option>
+        </select>
+      </div>
+
+      <div class="cartao">
+        <table>
+          <thead><tr><th>Nome</th><th>Idade</th><th>Secção</th><th>Encarregado</th><th>Contacto</th><th>Estado</th><th>Ações</th></tr></thead>
+          <tbody id="tabela-escuteiros"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ===================== DIRIGENTES ===================== -->
+    <section class="pagina" id="page-dirigentes">
+      <div id="alerta-dirigentes" class="alerta"></div>
+      <div class="cabecalho-pagina">
+        <div><h2>Dirigentes</h2><p>Adultos responsáveis por acompanhar os Escuteiros em cada secção.</p></div>
+        <button class="btn" onclick="toggleForm('form-dirigente')" aria-label="Adicionar novo dirigente">+ Novo Dirigente</button>
+      </div>
+
+      <form class="formulario" id="form-dirigente" onsubmit="adicionarDirigente(event)">
+        <div><label for="dir-nome">Nome completo</label><input required id="dir-nome" type="text" placeholder="Nome do dirigente"></div>
+        <div><label for="dir-funcao">Função</label>
+          <select required id="dir-funcao">
+            <option value="Chefe de Secção">Chefe de Secção</option>
+            <option value="Subchefe">Subchefe</option>
+            <option value="Capelão">Capelão</option>
+            <option value="Chefe de Agrupamento">Chefe de Agrupamento</option>
+            <option value="Secretário(a)">Secretário(a)</option>
+            <option value="Tesoureiro(a)">Tesoureiro(a)</option>
+          </select>
+        </div>
+        <div><label for="dir-secao">Secção que acompanha</label>
+          <select required id="dir-secao">
+            <option value="Lobitinhos">Lobitinhos</option>
+            <option value="Exploradores Júniores">Exploradores Júniores</option>
+            <option value="Exploradores Seniores">Exploradores Seniores</option>
+            <option value="Caminheiros">Caminheiros</option>
+            <option value="Agrupamento">Agrupamento (todas)</option>
+          </select>
+        </div>
+        <div><label for="dir-contacto">Contacto</label><input required id="dir-contacto" type="tel" placeholder="Nº de telefone"></div>
+        <div class="campo-full acoes-form">
+          <button type="button" class="btn secundario" onclick="toggleForm('form-dirigente')">Cancelar</button>
+          <button type="submit" class="btn dourado">Guardar Dirigente</button>
+        </div>
+      </form>
+
+      <div class="cartao">
+        <table>
+          <thead><tr><th>Nome</th><th>Função</th><th>Secção</th><th>Contacto</th><th>Estado</th><th>Ações</th></tr></thead>
+          <tbody id="tabela-dirigentes"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ===================== SECÇÕES ===================== -->
+    <section class="pagina" id="page-secoes">
+      <div class="cabecalho-pagina"><div><h2>Secções</h2><p>Estrutura etária do agrupamento — cada Escuteiro é automaticamente enquadrado pela idade.</p></div></div>
+      <div class="grid-secoes" id="grid-secoes"></div>
+    </section>
+
+    <!-- ===================== ÁREAS DE DESENVOLVIMENTO ===================== -->
+    <section class="pagina" id="page-areas">
+      <div class="cabecalho-pagina">
+        <div><h2>Áreas de Desenvolvimento Escutista</h2><p>Substituem as antigas "Disciplinas" — as dimensões trabalhadas com os Escuteiros em cada etapa.</p></div>
+      </div>
+      <div class="areas-lista">
+        <div class="area-card"><h4>🕊️ Espiritual</h4><p>Formação de fé e valores cristãos, alinhados à missão da IECA.</p></div>
+        <div class="area-card"><h4>💪 Físico</h4><p>Saúde, vida ao ar livre e desenvolvimento corporal.</p></div>
+        <div class="area-card"><h4>📚 Intelectual</h4><p>Curiosidade, resolução de problemas e aprendizagem contínua.</p></div>
+        <div class="area-card"><h4>❤️ Afetivo</h4><p>Equilíbrio emocional e relações saudáveis.</p></div>
+        <div class="area-card"><h4>🤝 Social</h4><p>Trabalho em equipa, serviço comunitário e cidadania.</p></div>
+        <div class="area-card"><h4>🧭 Caráter</h4><p>Responsabilidade, honestidade e autodisciplina, guiadas pela Lei do Escuteiro.</p></div>
+      </div>
+    </section>
+
+    <!-- ===================== SECRETARIA ===================== -->
+    <section class="pagina" id="page-secretaria">
+      <div id="alerta-secretaria" class="alerta"></div>
+      <div class="cabecalho-pagina"><div><h2>Secretaria</h2><p>Cadastramento e inscrição de novos membros no movimento.</p></div></div>
+
+      <form class="formulario aberto" id="form-secretaria" onsubmit="cadastrarNovoMembro(event)">
+        <div><label for="sec-nome">Nome completo</label><input required id="sec-nome" type="text" placeholder="Nome completo"></div>
+        <div><label for="sec-nasc">Data de nascimento</label><input required id="sec-nasc" type="date"></div>
+        <div><label for="sec-tipo">Tipo de membro</label>
+          <select id="sec-tipo" onchange="alternarCamposSecretaria()">
+            <option value="escuteiro">Escuteiro</option>
+            <option value="dirigente">Dirigente</option>
+          </select>
+        </div>
+        <div id="sec-campo-enc"><label for="sec-enc">Encarregado de Educação</label><input id="sec-enc" type="text" placeholder="Nome do encarregado"></div>
+        <div><label for="sec-contacto">Contacto</label><input required id="sec-contacto" type="tel" placeholder="Nº de telefone"></div>
+        <div><label for="sec-doc">Bilhete de Identidade / Cédula</label><input id="sec-doc" type="text" placeholder="Nº do documento"></div>
+        <div class="campo-full acoes-form">
+          <button type="reset" class="btn secundario">Limpar</button>
+          <button type="submit" class="btn dourado">Concluir Cadastramento</button>
+        </div>
+      </form>
+
+      <div class="cartao">
+        <table>
+          <thead><tr><th>Nome</th><th>Tipo</th><th>Idade / Secção</th><th>Contacto</th><th>Data de cadastro</th></tr></thead>
+          <tbody id="tabela-cadastros"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ===================== TESOURARIA ===================== -->
+    <section class="pagina" id="page-tesouraria">
+      <div id="alerta-tesouraria" class="alerta"></div>
+      <div class="cabecalho-pagina">
+        <div><h2>Tesouraria</h2><p>Inscrições, mensalidades e pagamentos de atividades do agrupamento.</p></div>
+        <button class="btn" onclick="toggleForm('form-pagamento')" aria-label="Adicionar novo pagamento">+ Novo Pagamento</button>
+      </div>
+
+      <div class="resumo-financeiro">
+        <div class="resumo-item"><div class="rotulo">Total recebido</div><div class="valor" id="res-recebido">0 Kz</div></div>
+        <div class="resumo-item receber"><div class="rotulo">Pendente</div><div class="valor" id="res-pendente">0 Kz</div></div>
+        <div class="resumo-item"><div class="rotulo">Nº de lançamentos</div><div class="valor" id="res-total">0</div></div>
+      </div>
+
+      <form class="formulario" id="form-pagamento" onsubmit="adicionarPagamento(event)">
+        <div><label for="pag-nome">Nome</label><input required id="pag-nome" type="text" placeholder="Escuteiro / Dirigente"></div>
+        <div><label for="pag-tipo">Tipo de pagamento</label>
+          <select id="pag-tipo">
+            <option>Inscrição no Movimento</option>
+            <option>Mensalidade</option>
+            <option>Atividade / Acampamento</option>
+            <option>Uniforme</option>
+          </select>
+        </div>
+        <div><label for="pag-valor">Valor (Kz)</label><input required id="pag-valor" type="number" min="0" placeholder="0"></div>
+        <div><label for="pag-data">Data</label><input required id="pag-data" type="date"></div>
+        <div><label for="pag-estado">Estado</label>
+          <select id="pag-estado"><option value="Pago">Pago</option><option value="Pendente">Pendente</option></select>
+        </div>
+        <div class="campo-full acoes-form">
+          <button type="button" class="btn secundario" onclick="toggleForm('form-pagamento')">Cancelar</button>
+          <button type="submit" class="btn dourado">Registar Pagamento</button>
+        </div>
+      </form>
+
+      <div class="cartao">
+        <table>
+          <thead><tr><th>Nome</th><th>Tipo</th><th>Valor</th><th>Data</th><th>Estado</th><th>Ações</th></tr></thead>
+          <tbody id="tabela-pagamentos"></tbody>
+        </table>
+      </div>
+    </section>
+
+  </div>
+
+  <footer class="rodape">Agrupamento 97 · IECA — Rev. José Belo Chipenda &nbsp;|&nbsp; Sistema de Gestão Escutista</footer>
+</div>
+
+<!-- Modal de confirmação de eliminação -->
+<div class="modal" id="modal-confirmar">
+  <div class="modal-conteudo">
+    <h3>Confirmar eliminação</h3>
+    <p id="modal-texto">Tem a certeza que deseja eliminar este registo?</p>
+    <div class="modal-acoes">
+      <button class="btn secundario" onclick="fecharModal()">Cancelar</button>
+      <button class="btn perigo" onclick="confirmarEliminacao()">Eliminar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ===================== DADOS (com localStorage) ===================== */
+const STORAGE_KEY_ESCUTEIROS = 'ag97_escuteiros';
+const STORAGE_KEY_DIRIGENTES = 'ag97_dirigentes';
+const STORAGE_KEY_CADASTROS = 'ag97_cadastros';
+const STORAGE_KEY_PAGAMENTOS = 'ag97_pagamentos';
+
+// Dados iniciais
+const dadosIniciais = {
+  escuteiros: [
+    {id:1, nome:"Manuel António", nasc:"2019-03-12", encarregado:"Isabel António", contacto:"923 111 222", estado:"Ativo"},
+    {id:2, nome:"Beatriz Kiala", nasc:"2014-07-02", encarregado:"João Kiala", contacto:"924 222 333", estado:"Ativo"},
+    {id:3, nome:"Domingos Sachipengo", nasc:"2010-11-20", encarregado:"Maria Sachipengo", contacto:"925 333 444", estado:"Ativo"},
+    {id:4, nome:"Ester Chipenda", nasc:"2006-01-15", encarregado:"—", contacto:"926 444 555", estado:"Ativo"},
+  ],
+  dirigentes: [
+    {id:1, nome:"Pastor Ndalu Chipenda", funcao:"Chefe de Agrupamento", secao:"Agrupamento", contacto:"927 555 666", estado:"Ativo"},
+    {id:2, nome:"Sara Bumba", funcao:"Chefe de Secção", secao:"Lobitinhos", contacto:"928 666 777", estado:"Ativo"},
+    {id:3, nome:"Pedro Vunge", funcao:"Chefe de Secção", secao:"Exploradores Júniores", contacto:"929 777 888", estado:"Ativo"},
+  ],
+  pagamentos: [
+    {id:1, nome:"Manuel António", tipo:"Inscrição no Movimento", valor:5000, data:"2026-02-10", estado:"Pago"},
+    {id:2, nome:"Beatriz Kiala", tipo:"Mensalidade", valor:1500, data:"2026-06-05", estado:"Pendente"},
+  ]
+};
+
+let escuteiros = [];
+let dirigentes = [];
+let cadastros = [];
+let pagamentos = [];
+let proximoIdEscuteiro = 1;
+let proximoIdDirigente = 1;
+let proximoIdPagamento = 1;
+
+// Estado para modal de eliminação
+let eliminacaoEmCurso = {tipo: null, id: null};
+
+/* ===================== FUNÇÕES DE STORAGE ===================== */
+function carregarDados() {
+  const escuteirosSalvos = localStorage.getItem(STORAGE_KEY_ESCUTEIROS);
+  const dirigentesSalvos = localStorage.getItem(STORAGE_KEY_DIRIGENTES);
+  const cadastrosSalvos = localStorage.getItem(STORAGE_KEY_CADASTROS);
+  const pagamentosSalvos = localStorage.getItem(STORAGE_KEY_PAGAMENTOS);
+
+  escuteiros = escuteirosSalvos ? JSON.parse(escuteirosSalvos) : dadosIniciais.escuteiros;
+  dirigentes = dirigentesSalvos ? JSON.parse(dirigentesSalvos) : dadosIniciais.dirigentes;
+  cadastros = cadastrosSalvos ? JSON.parse(cadastrosSalvos) : [];
+  pagamentos = pagamentosSalvos ? JSON.parse(pagamentosSalvos) : dadosIniciais.pagamentos;
+
+  proximoIdEscuteiro = Math.max(...escuteiros.map(e => e.id), 0) + 1;
+  proximoIdDirigente = Math.max(...dirigentes.map(d => d.id), 0) + 1;
+  proximoIdPagamento = Math.max(...pagamentos.map(p => p.id), 0) + 1;
+}
+
+function salvarEscuteiros() {
+  localStorage.setItem(STORAGE_KEY_ESCUTEIROS, JSON.stringify(escuteiros));
+}
+
+function salvarDirigentes() {
+  localStorage.setItem(STORAGE_KEY_DIRIGENTES, JSON.stringify(dirigentes));
+}
+
+function salvarCadastros() {
+  localStorage.setItem(STORAGE_KEY_CADASTROS, JSON.stringify(cadastros));
+}
+
+function salvarPagamentos() {
+  localStorage.setItem(STORAGE_KEY_PAGAMENTOS, JSON.stringify(pagamentos));
+}
+
+function mostrarAlerta(elementoId, tipo, mensagem) {
+  const alerta = document.getElementById(elementoId);
+  alerta.textContent = mensagem;
+  alerta.className = `alerta ${tipo}`;
+  setTimeout(() => alerta.className = 'alerta', 4000);
+}
+
+/* ===================== MODAL DE ELIMINAÇÃO ===================== */
+function abrirModalEliminacao(tipo, id) {
+  eliminacaoEmCurso = {tipo, id};
+  document.getElementById('modal-confirmar').classList.add('aberto');
+}
+
+function fecharModal() {
+  document.getElementById('modal-confirmar').classList.remove('aberto');
+  eliminacaoEmCurso = {tipo: null, id: null};
+}
+
+function confirmarEliminacao() {
+  const {tipo, id} = eliminacaoEmCurso;
+  if(tipo === 'escuteiro'){
+    escuteiros = escuteiros.filter(e => e.id !== id);
+    salvarEscuteiros();
+    renderEscuteiros();
+    renderSecoes();
+    mostrarAlerta('alerta-escuteiros', 'sucesso', '✓ Escuteiro eliminado com sucesso');
+  } else if(tipo === 'dirigente'){
+    dirigentes = dirigentes.filter(d => d.id !== id);
+    salvarDirigentes();
+    renderDirigentes();
+    renderSecoes();
+    mostrarAlerta('alerta-dirigentes', 'sucesso', '✓ Dirigente eliminado com sucesso');
+  } else if(tipo === 'pagamento'){
+    pagamentos = pagamentos.filter(p => p.id !== id);
+    salvarPagamentos();
+    renderPagamentos();
+    mostrarAlerta('alerta-tesouraria', 'sucesso', '✓ Pagamento eliminado com sucesso');
+  }
+  fecharModal();
+}
+
+/* ===================== NAVEGAÇÃO ===================== */
+const titulos = {
+  home:"Início", escuteiros:"Escuteiros", dirigentes:"Dirigentes", secoes:"Secções",
+  areas:"Áreas de Desenvolvimento", secretaria:"Secretaria", tesouraria:"Tesouraria"
+};
+
+function irPara(pagina){
+  document.querySelectorAll('.pagina').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+pagina).classList.add('active');
+  document.querySelectorAll('.menu button').forEach(b=>b.classList.toggle('active', b.dataset.page===pagina));
+  document.getElementById('tituloPagina').textContent = titulos[pagina];
+  document.getElementById('sidebar').classList.remove('aberta');
+}
+
+document.querySelectorAll('.menu button, .atalho-card').forEach(el=>{
+  el.addEventListener('click', ()=> irPara(el.dataset.page));
+});
+
+document.getElementById('menuToggle').addEventListener('click', ()=>{
+  document.getElementById('sidebar').classList.toggle('aberta');
+});
+
+document.getElementById('dataHoje').textContent = new Date().toLocaleDateString('pt-PT', {weekday:'long', year:'numeric', month:'long', day:'numeric'});
+
+function toggleForm(id){
+  document.getElementById(id).classList.toggle('aberto');
+}
+
+/* ===================== LÓGICA DE IDADE / SECÇÃO ===================== */
+function calcularIdade(dataNasc){
+  const nasc = new Date(dataNasc);
+  const hoje = new Date();
+  let idade = hoje.getFullYear() - nasc.getFullYear();
+  const m = hoje.getMonth() - nasc.getMonth();
+  if(m < 0 || (m===0 && hoje.getDate() < nasc.getDate())) idade--;
+  return idade;
+}
+
+function secaoPorIdade(idade){
+  if(idade>=2 && idade<=9) return "Lobitinhos";
+  if(idade>=10 && idade<=13) return "Exploradores Júniores";
+  if(idade>=14 && idade<=17) return "Exploradores Seniores";
+  if(idade>=18 && idade<=23) return "Caminheiros";
+  return "Fora de faixa etária";
+}
+
+function classeBadgeSecao(secao){
+  return {
+    "Lobitinhos":"lobitinhos", "Exploradores Júniores":"juniores",
+    "Exploradores Seniores":"seniores", "Caminheiros":"caminheiros"
+  }[secao] || "";
+}
+
+/* ===================== VALIDAÇÃO ===================== */
+function validarTelefone(tel) {
+  return /^\d{3}\s\d{3}\s\d{3}$/.test(tel) || /^\d{9}$/.test(tel);
+}
+
+/* ===================== ESCUTEIROS ===================== */
+function renderEscuteiros(){
+  const filtroTexto = document.getElementById('filtro-escuteiro').value.toLowerCase();
+  const filtroSecao = document.getElementById('filtro-secao-escuteiro').value;
+  const corpo = document.getElementById('tabela-escuteiros');
+  corpo.innerHTML = '';
+
+  const filtrados = escuteiros.filter(e=>{
+    const idade = calcularIdade(e.nasc);
+    const secao = secaoPorIdade(idade);
+    const passaTexto = e.nome.toLowerCase().includes(filtroTexto);
+    const passaSecao = !filtroSecao || secao === filtroSecao;
+    return passaTexto && passaSecao;
+  });
+
+  if(filtrados.length===0){
+    corpo.innerHTML = `<tr><td colspan="7" class="vazio">Nenhum Escuteiro encontrado.</td></tr>`;
+    return;
+  }
+
+  filtrados.forEach(e=>{
+    const idade = calcularIdade(e.nasc);
+    const secao = secaoPorIdade(idade);
+    corpo.innerHTML += `<tr>
+      <td>${e.nome}</td>
+      <td>${idade} anos</td>
+      <td><span class="badge ${classeBadgeSecao(secao)}">${secao}</span></td>
+      <td>${e.encarregado}</td>
+      <td>${e.contacto}</td>
+      <td><span class="badge ativo">${e.estado}</span></td>
+      <td><div class="acoes-linha">
+        <button class="btn pequeno" onclick="abrirModalEliminacao('escuteiro', ${e.id})" aria-label="Eliminar ${e.nome}">🗑️ Eliminar</button>
+      </div></td>
+    </tr>`;
+  });
+}
+
+function adicionarEscuteiro(ev){
+  ev.preventDefault();
+  const tel = document.getElementById('esc-contacto').value;
+  if(!validarTelefone(tel)){
+    mostrarAlerta('alerta-escuteiros', 'erro', '⚠️ Contacto inválido. Use o formato: 923 111 222');
+    return;
+  }
+  escuteiros.push({
+    id: proximoIdEscuteiro++,
+    nome: document.getElementById('esc-nome').value,
+    nasc: document.getElementById('esc-nasc').value,
+    encarregado: document.getElementById('esc-enc').value,
+    contacto: tel,
+    estado: "Ativo"
+  });
+  salvarEscuteiros();
+  ev.target.reset();
+  toggleForm('form-escuteiro');
+  renderEscuteiros();
+  renderSecoes();
+  mostrarAlerta('alerta-escuteiros', 'sucesso', '✓ Escuteiro adicionado com sucesso');
+}
+
+/* ===================== DIRIGENTES ===================== */
+function renderDirigentes(){
+  const corpo = document.getElementById('tabela-dirigentes');
+  corpo.innerHTML = '';
+  if(dirigentes.length===0){
+    corpo.innerHTML = `<tr><td colspan="6" class="vazio">Nenhum Dirigente cadastrado.</td></tr>`;
+    return;
+  }
+  dirigentes.forEach(d=>{
+    corpo.innerHTML += `<tr>
+      <td>${d.nome}</td><td>${d.funcao}</td>
+      <td><span class="badge dirigentes">${d.secao}</span></td>
+      <td>${d.contacto}</td>
+      <td><span class="badge ativo">${d.estado}</span></td>
+      <td><div class="acoes-linha">
+        <button class="btn pequeno" onclick="abrirModalEliminacao('dirigente', ${d.id})" aria-label="Eliminar ${d.nome}">🗑️ Eliminar</button>
+      </div></td>
+    </tr>`;
+  });
+}
+
+function adicionarDirigente(ev){
+  ev.preventDefault();
+  const tel = document.getElementById('dir-contacto').value;
+  if(!validarTelefone(tel)){
+    mostrarAlerta('alerta-dirigentes', 'erro', '⚠️ Contacto inválido. Use o formato: 923 111 222');
+    return;
+  }
+  dirigentes.push({
+    id: proximoIdDirigente++,
+    nome: document.getElementById('dir-nome').value,
+    funcao: document.getElementById('dir-funcao').value,
+    secao: document.getElementById('dir-secao').value,
+    contacto: tel,
+    estado: "Ativo"
+  });
+  salvarDirigentes();
+  ev.target.reset();
+  toggleForm('form-dirigente');
+  renderDirigentes();
+  renderSecoes();
+  mostrarAlerta('alerta-dirigentes', 'sucesso', '✓ Dirigente adicionado com sucesso');
+}
+
+/* ===================== SECÇÕES ===================== */
+function renderSecoes(){
+  const definicoes = [
+    {chave:"Lobitinhos", faixa:"2 – 9 anos", classe:"lobitinhos", icone:"🐺"},
+    {chave:"Exploradores Júniores", faixa:"10 – 13 anos", classe:"juniores", icone:"🧭"},
+    {chave:"Exploradores Seniores", faixa:"14 – 17 anos", classe:"seniores", icone:"🏕️"},
+    {chave:"Caminheiros", faixa:"18 – 23 anos", classe:"caminheiros", icone:"🎒"},
+  ];
+  const grid = document.getElementById('grid-secoes');
+  grid.innerHTML = '';
+  definicoes.forEach(d=>{
+    const total = escuteiros.filter(e=> secaoPorIdade(calcularIdade(e.nasc)) === d.chave).length;
+    grid.innerHTML += `<div class="secao-card ${d.classe}">
+      <h3>${d.icone} ${d.chave}</h3>
+      <div class="faixa">${d.faixa}</div>
+      <div class="contagem">${total} <span>Escuteiros</span></div>
+    </div>`;
+  });
+  const totalDirigentes = dirigentes.length;
+  grid.innerHTML += `<div class="secao-card dirigentes">
+    <h3>🎖️ Dirigentes</h3>
+    <div class="faixa">Adultos acompanhantes</div>
+    <div class="contagem">${totalDirigentes} <span>Dirigentes</span></div>
+  </div>`;
+}
+
+/* ===================== SECRETARIA ===================== */
+function alternarCamposSecretaria(){
+  const tipo = document.getElementById('sec-tipo').value;
+  document.getElementById('sec-campo-enc').style.display = tipo === 'dirigente' ? 'none' : 'block';
+}
+
+function renderCadastros(){
+  const corpo = document.getElementById('tabela-cadastros');
+  corpo.innerHTML = '';
+  if(cadastros.length===0){
+    corpo.innerHTML = `<tr><td colspan="5" class="vazio">Ainda não há novos cadastramentos.</td></tr>`;
+    return;
+  }
+  cadastros.forEach(c=>{
+    corpo.innerHTML += `<tr>
+      <td>${c.nome}</td>
+      <td>${c.tipo === 'escuteiro' ? 'Escuteiro' : 'Dirigente'}</td>
+      <td>${c.detalheIdade}</td>
+      <td>${c.contacto}</td>
+      <td>${c.dataCadastro}</td>
+    </tr>`;
+  });
+}
+
+function cadastrarNovoMembro(ev){
+  ev.preventDefault();
+  const tipo = document.getElementById('sec-tipo').value;
+  const nome = document.getElementById('sec-nome').value;
+  const nasc = document.getElementById('sec-nasc').value;
+  const contacto = document.getElementById('sec-contacto').value;
+  const encarregado = document.getElementById('sec-enc').value || "—";
+  const idade = calcularIdade(nasc);
+
+  if(!validarTelefone(contacto)){
+    mostrarAlerta('alerta-secretaria', 'erro', '⚠️ Contacto inválido. Use o formato: 923 111 222');
+    return;
+  }
+
+  if(tipo === 'escuteiro'){
+    escuteiros.push({id: proximoIdEscuteiro++, nome, nasc, encarregado, contacto, estado:"Ativo"});
+    salvarEscuteiros();
+  } else {
+    dirigentes.push({id: proximoIdDirigente++, nome, funcao:"Dirigente", secao:"Agrupamento", contacto, estado:"Ativo"});
+    salvarDirigentes();
+  }
+
+  cadastros.unshift({
+    nome, tipo, contacto,
+    detalheIdade: tipo==='escuteiro' ? `${idade} anos · ${secaoPorIdade(idade)}` : 'Dirigente',
+    dataCadastro: new Date().toLocaleDateString('pt-PT')
+  });
+  salvarCadastros();
+
+  ev.target.reset();
+  document.getElementById('sec-campo-enc').style.display = 'block';
+  renderCadastros();
+  renderEscuteiros();
+  renderDirigentes();
+  renderSecoes();
+  mostrarAlerta('alerta-secretaria', 'sucesso', '✓ Cadastramento concluído com sucesso');
+}
+
+/* ===================== TESOURARIA ===================== */
+function formatarKz(valor){
+  return valor.toLocaleString('pt-PT') + " Kz";
+}
+
+function renderPagamentos(){
+  const corpo = document.getElementById('tabela-pagamentos');
+  corpo.innerHTML = '';
+  let recebido = 0, pendente = 0;
+
+  if(pagamentos.length===0){
+    corpo.innerHTML = `<tr><td colspan="6" class="vazio">Nenhum pagamento registado.</td></tr>`;
+  } else {
+    pagamentos.forEach(p=>{
+      if(p.estado === 'Pago') recebido += Number(p.valor); else pendente += Number(p.valor);
+      corpo.innerHTML += `<tr>
+        <td>${p.nome}</td><td>${p.tipo}</td><td>${formatarKz(Number(p.valor))}</td>
+        <td>${new Date(p.data).toLocaleDateString('pt-PT')}</td>
+        <td><span class="badge ${p.estado==='Pago'?'pago':'pendente'}">${p.estado}</span></td>
+        <td><div class="acoes-linha">
+          <button class="btn pequeno" onclick="abrirModalEliminacao('pagamento', ${p.id})" aria-label="Eliminar pagamento">🗑️ Eliminar</button>
+        </div></td>
+      </tr>`;
+    });
+  }
+  document.getElementById('res-recebido').textContent = formatarKz(recebido);
+  document.getElementById('res-pendente').textContent = formatarKz(pendente);
+  document.getElementById('res-total').textContent = pagamentos.length;
+}
+
+function adicionarPagamento(ev){
+  ev.preventDefault();
+  pagamentos.push({
+    id: proximoIdPagamento++,
+    nome: document.getElementById('pag-nome').value,
+    tipo: document.getElementById('pag-tipo').value,
+    valor: document.getElementById('pag-valor').value,
+    data: document.getElementById('pag-data').value,
+    estado: document.getElementById('pag-estado').value
+  });
+  salvarPagamentos();
+  ev.target.reset();
+  toggleForm('form-pagamento');
+  renderPagamentos();
+  mostrarAlerta('alerta-tesouraria', 'sucesso', '✓ Pagamento registado com sucesso');
+}
+
+/* ===================== INICIALIZAÇÃO ===================== */
+carregarDados();
+renderEscuteiros();
+renderDirigentes();
+renderSecoes();
+renderCadastros();
+renderPagamentos();
+
+// Fechar modal ao clicar fora
+document.getElementById('modal-confirmar').addEventListener('click', (e) => {
+  if(e.target.id === 'modal-confirmar') fecharModal();
+});
+</script>
+</body>
+</html>
