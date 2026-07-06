@@ -3,553 +3,208 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Sistema de Gestão Escutista do Agrupamento 97 da IECA – Rev. José Belo Chipenda. Gerir escuteiros, dirigentes, secções, áreas de desenvolvimento e finanças do agrupamento.">
-<meta name="keywords" content="Escuteiros, IECA, Agrupamento 97, Gestão Escutista, Secções, Lobitinhos, Exploradores, Caminheiros, Dirigentes, Tesouraria, Secretaria">
-<meta   name="author" content="Agrupamento 97 · IECA – Rev. José Belo Chipenda">
-<meta name="robots" content="index, follow">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<title>Agrupamento 97 · IECA – Rev. José Belo Chipenda</title>
-<link rel="icon" type="image/jpeg" href="logo.jpeg">
+<meta name="description" content="Sistema de Gestão Escutista do Agrupamento 97 da IECA.">
+<title>Agrupamento 97 · IECA</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <style>
-  :root{
-    --lilas: #7030A0;
-    --lilas-escuro: #4A1D6E;
-    --lilas-suave: #F3EAFB;
-    --dourado: #E0A335;
-    --branco: #FFFFFF;
-    --texto: #2B2233;
-    --texto-suave: #6E6178;
-    --linha: #E4D9F2;
-    --erro: #C0392B;
-    --ok: #2E8B57;
-    --font-display: 'Poppins', 'Segoe UI', sans-serif;
-    --font-body: 'Inter', 'Segoe UI', sans-serif;
-    --font-mono: 'Fira Code', 'Consolas', monospace;
-    --raio: 14px;
-    --sombra: 0 8px 24px rgba(74,29,110,0.10);
-  }
-
-  *{box-sizing:border-box; margin:0; padding:0;}
-  html{scroll-behavior:smooth;}
-  body{
-    font-family: var(--font-body);
-    background: var(--lilas-suave);
-    color: var(--texto);
-    min-height:100vh;
-    display:flex;
-  }
-
-  /* ===== SIDEBAR ===== */
-  .sidebar{
-    width:250px;
-    background: linear-gradient(180deg, var(--lilas-escuro), var(--lilas));
-    color:var(--branco);
-    display:flex;
-    flex-direction:column;
-    position:fixed;
-    top:0; left:0; bottom:0;
-    z-index:50;
-    transition: transform .3s ease;
-  }
-  .brand{
-    display:flex;
-    align-items:center;
-    gap:10px;
-    padding:22px 18px;
-    border-bottom:1px solid rgba(255,255,255,0.15);
-  }
-  .brand .logo-img{flex-shrink:0; width:44px; height:44px; object-fit:cover; border-radius:50%; background:var(--branco); border:2px solid rgba(255,255,255,0.6);}
-  .brand-text{line-height:1.15;}
-  .brand-text .num{font-family:var(--font-display); font-weight:700; font-size:1.05rem; letter-spacing:.5px;}
-  .brand-text .sub{font-size:.68rem; opacity:.8; text-transform:uppercase; letter-spacing:.6px;}
-
-  nav.menu{flex:1; padding:14px 10px; overflow-y:auto;}
-  .menu-label{font-size:.68rem; text-transform:uppercase; letter-spacing:.8px; opacity:.6; padding:14px 12px 6px;}
-  .menu button{
-    width:100%;
-    text-align:left;
-    background:transparent;
-    border:none;
-    color:rgba(255,255,255,0.88);
-    font-family:var(--font-body);
-    font-size:.9rem;
-    padding:10px 12px;
-    border-radius:10px;
-    display:flex;
-    align-items:center;
-    gap:10px;
-    cursor:pointer;
-    transition:.15s;
-    margin-bottom:2px;
-  }
-  .menu button:hover{background:rgba(255,255,255,0.10);}
-  .menu button.active{background:var(--branco); color:var(--lilas-escuro); font-weight:600;}
-  .menu button .ico{width:18px; text-align:center; font-size:1rem;}
-
-  .sidebar-foot{
-    padding:14px 18px;
-    font-size:.68rem;
-    opacity:.65;
-    border-top:1px solid rgba(255,255,255,0.15);
-    text-align: center;
-  }
-
-  .user-info{
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 10px;
-    background: rgba(255,255,255,0.1);
-    border-radius: 8px;
-    margin-bottom: 10px;
-  }
-
-  .user-info .avatar{
-    width: 28px;
-    height: 28px;
-    border-radius: 50%;
-    background: var(--dourado);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.8rem;
-    font-weight: 600;
-  }
-
-  .user-info .nome{
-    font-size: 0.75rem;
-  }
-
-  .logout-btn{
-    background: rgba(255,255,255,0.2);
-    border: none;
-    color: var(--branco);
-    padding: 6px 10px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 0.75rem;
-    transition: 0.15s;
-    width: 100%;
-    margin-top: 8px;
-  }
-
-  .logout-btn:hover{
-    background: rgba(255,255,255,0.3);
-  }
-
-  /* ===== MAIN ===== */
-  .main{margin-left:250px; flex:1; min-height:100vh;}
-  .topbar{
-    background:var(--branco);
-    padding:16px 32px;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    border-bottom:1px solid var(--linha);
-    position:sticky; top:0; z-index:40;
-  }
-  .topbar h1{font-family:var(--font-display); font-size:1.15rem; color:var(--lilas-escuro);}
-  .topbar .data-hoje{font-size:.8rem; color:var(--texto-suave);}
-  .menu-toggle{display:none; background:none; border:none; font-size:1.4rem; color:var(--lilas-escuro); cursor:pointer;}
-
-  .conteudo{padding:32px; max-width:1180px;}
-  .pagina{display:none; animation: entra .35s ease;}
+  :root{--lilas:#7030A0;--lilas-escuro:#4A1D6E;--lilas-suave:#F3EAFB;--dourado:#E0A335;--branco:#FFF;--texto:#2B2233;--texto-suave:#6E6178;--linha:#E4D9F2;--erro:#C0392B;--ok:#2E8B57;--font-display:'Poppins','Segoe UI',sans-serif;--font-body:'Inter','Segoe UI',sans-serif;--raio:14px;--sombra:0 8px 24px rgba(74,29,110,.1);}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:var(--font-body);background:var(--lilas-suave);color:var(--texto);min-height:100vh;display:flex;}
+  .sidebar{width:250px;background:linear-gradient(180deg,var(--lilas-escuro),var(--lilas));color:var(--branco);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:50;transition:.3s ease;}
+  .brand{display:flex;align-items:center;gap:10px;padding:22px 18px;border-bottom:1px solid rgba(255,255,255,.15);}
+  .brand .logo-img{width:44px;height:44px;border-radius:50%;object-fit:cover;}
+  .brand-text .num{font-family:var(--font-display);font-weight:700;font-size:1.05rem;}
+  .brand-text .sub{font-size:.68rem;opacity:.8;text-transform:uppercase;}
+  nav.menu{flex:1;padding:14px 10px;overflow-y:auto;}
+  .menu-label{font-size:.68rem;text-transform:uppercase;opacity:.6;padding:14px 12px 6px;}
+  .menu button{width:100%;text-align:left;background:0;border:none;color:rgba(255,255,255,.88);font-family:var(--font-body);font-size:.9rem;padding:10px 12px;border-radius:10px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:.15s;margin-bottom:2px;}
+  .menu button:hover{background:rgba(255,255,255,.1);}
+  .menu button.active{background:var(--branco);color:var(--lilas-escuro);font-weight:600;}
+  .sidebar-foot{padding:14px 18px;font-size:.68rem;opacity:.65;border-top:1px solid rgba(255,255,255,.15);text-align:center;}
+  .logout-btn{background:rgba(255,255,255,.2);border:none;color:var(--branco);padding:6px 10px;border-radius:6px;cursor:pointer;font-size:.75rem;width:100%;margin-top:8px;transition:.15s;}
+  .logout-btn:hover{background:rgba(255,255,255,.3);}
+  .main{margin-left:250px;flex:1;min-height:100vh;}
+  .topbar{background:var(--branco);padding:16px 32px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--linha);position:sticky;top:0;z-index:40;}
+  .topbar h1{font-family:var(--font-display);font-size:1.15rem;color:var(--lilas-escuro);}
+  .menu-toggle{display:none;background:0;border:none;font-size:1.4rem;cursor:pointer;}
+  .conteudo{padding:32px;max-width:1180px;}
+  .pagina{display:none;animation:entra .35s ease;}
   .pagina.active{display:block;}
-  @keyframes entra{from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);}}
-
-  /* ===== LOGIN ===== */
-  .login-container{
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: linear-gradient(135deg, var(--lilas) 0%, var(--lilas-escuro) 100%);
-  }
-
-  .login-card{
-    background: var(--branco);
-    border-radius: var(--raio);
-    padding: 40px;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-    width: 100%;
-    max-width: 400px;
-  }
-
-  .login-card h1{
-    font-family: var(--font-display);
-    color: var(--lilas-escuro);
-    margin-bottom: 8px;
-  }
-
-  .login-card p{
-    color: var(--texto-suave);
-    font-size: 0.9rem;
-    margin-bottom: 24px;
-  }
-
-  .login-card .form-group{
-    margin-bottom: 16px;
-  }
-
-  .login-card label{
-    display: block;
-    font-weight: 600;
-    color: var(--texto-suave);
-    margin-bottom: 6px;
-    font-size: 0.8rem;
-  }
-
-  .login-card input{
-    width: 100%;
-    padding: 12px;
-    border: 1.5px solid var(--linha);
-    border-radius: 8px;
-    font-size: 0.9rem;
-    font-family: var(--font-body);
-  }
-
-  .login-card input:focus{
-    outline: none;
-    border-color: var(--lilas);
-  }
-
-  .login-card .btn{
-    width: 100%;
-    margin-top: 12px;
-  }
-
-  /* ===== HOME ===== */
-  .hero{
-    background: linear-gradient(120deg, var(--lilas) 0%, var(--lilas-escuro) 100%);
-    border-radius: 22px;
-    padding: 46px 40px;
-    color:var(--branco);
-    position:relative;
-    overflow:hidden;
-    margin-bottom:30px;
-  }
-  .hero::after{
-    content:"";
-    position:absolute; right:-60px; top:-60px;
-    width:260px; height:260px;
-    background: radial-gradient(circle, rgba(224,163,53,0.35), transparent 70%);
-  }
-  .hero .logo-marca{
-    position:absolute; right:34px; top:50%; transform:translateY(-50%);
-    width:130px; height:130px; border-radius:50%;
-    object-fit:cover; border:4px solid rgba(255,255,255,0.85);
-    box-shadow:0 10px 26px rgba(0,0,0,0.25);
-  }
-  @media (max-width:760px){ .hero .logo-marca{display:none;} }
-  .hero .eyebrow{font-size:.75rem; letter-spacing:1.5px; text-transform:uppercase; opacity:.8; margin-bottom:8px;}
-  .hero h2{font-family:var(--font-display); font-size:2rem; margin-bottom:10px; max-width:640px;}
-  .hero p{max-width:560px; opacity:.92; line-height:1.55; font-size:.95rem;}
-
-  .trilha{
-    display:flex;
-    gap:14px;
-    margin-top:28px;
-    flex-wrap:wrap;
-  }
-  .trilha .etapa{
-    background:rgba(255,255,255,0.12);
-    border:1px solid rgba(255,255,255,0.25);
-    border-radius:12px;
-    padding:10px 14px;
-    font-size:.78rem;
-    display:flex;
-    align-items:center;
-    gap:8px;
-  }
-  .trilha .etapa b{font-family:var(--font-mono); color:var(--dourado);}
-
-  .atalhos{display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:16px; margin-bottom:10px;}
-  .atalho-card{
-    background:var(--branco);
-    border-radius:var(--raio);
-    padding:20px;
-    box-shadow:var(--sombra);
-    cursor:pointer;
-    transition:.2s;
-    border:1px solid var(--linha);
-  }
-  .atalho-card:hover{transform:translateY(-3px); border-color:var(--lilas);}
-  .atalho-card .ico{font-size:1.5rem; margin-bottom:8px;}
-  .atalho-card h3{font-family:var(--font-display); font-size:.95rem; margin-bottom:4px; color:var(--lilas-escuro);}
-  .atalho-card p{font-size:.78rem; color:var(--texto-suave);}
-
-  /* ===== SECÇÃO GENÉRICA ===== */
-  .cabecalho-pagina{display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:22px; flex-wrap:wrap; gap:10px;}
-  .cabecalho-pagina h2{font-family:var(--font-display); font-size:1.4rem; color:var(--lilas-escuro);}
-  .cabecalho-pagina p{color:var(--texto-suave); font-size:.85rem; margin-top:4px;}
-
-  .btn{
-    background:var(--lilas);
-    color:var(--branco);
-    border:none;
-    padding:10px 18px;
-    border-radius:10px;
-    font-size:.85rem;
-    font-weight:600;
-    cursor:pointer;
-    transition:.15s;
-  }
+  @keyframes entra{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+  .login-container{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--lilas) 0%,var(--lilas-escuro) 100%);}
+  .login-card{background:var(--branco);border-radius:var(--raio);padding:40px;box-shadow:0 20px 60px rgba(0,0,0,.3);width:100%;max-width:400px;}
+  .login-card h1{font-family:var(--font-display);color:var(--lilas-escuro);margin-bottom:8px;}
+  .form-group{margin-bottom:16px;}
+  .form-group label{display:block;font-weight:600;color:var(--texto-suave);margin-bottom:6px;font-size:.8rem;}
+  .login-card input{width:100%;padding:12px;border:1.5px solid var(--linha);border-radius:8px;font-size:.9rem;font-family:var(--font-body);}
+  .login-card input:focus{outline:0;border-color:var(--lilas);}
+  .hero{background:linear-gradient(120deg,var(--lilas) 0%,var(--lilas-escuro) 100%);border-radius:22px;padding:46px 40px;color:var(--branco);position:relative;overflow:hidden;margin-bottom:30px;}
+  .hero .logo-marca{position:absolute;right:34px;top:50%;transform:translateY(-50%);width:130px;height:130px;border-radius:50%;object-fit:cover;}
+  .hero h2{font-family:var(--font-display);font-size:2rem;margin-bottom:10px;}
+  .atalhos{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:10px;}
+  .atalho-card{background:var(--branco);border-radius:var(--raio);padding:20px;box-shadow:var(--sombra);cursor:pointer;transition:.2s;border:1px solid var(--linha);}
+  .atalho-card:hover{transform:translateY(-3px);border-color:var(--lilas);}
+  .atalho-card .ico{font-size:1.5rem;margin-bottom:8px;}
+  .atalho-card h3{font-family:var(--font-display);font-size:.95rem;margin-bottom:4px;color:var(--lilas-escuro);}
+  .cabecalho-pagina{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:22px;flex-wrap:wrap;gap:10px;}
+  .cabecalho-pagina h2{font-family:var(--font-display);font-size:1.4rem;color:var(--lilas-escuro);}
+  .btn{background:var(--lilas);color:var(--branco);border:none;padding:10px 18px;border-radius:10px;font-size:.85rem;font-weight:600;cursor:pointer;transition:.15s;}
   .btn:hover{background:var(--lilas-escuro);}
-  .btn.dourado{background:var(--dourado); color:var(--texto);}
+  .btn.dourado{background:var(--dourado);color:var(--texto);}
   .btn.dourado:hover{background:#c98d24;}
-  .btn.secundario{background:var(--branco); color:var(--lilas); border:1.5px solid var(--lilas);}
-  .btn.pequeno{padding:6px 12px; font-size:.75rem;}
+  .btn.secundario{background:var(--branco);color:var(--lilas);border:1.5px solid var(--lilas);}
+  .btn.pequeno{padding:6px 12px;font-size:.75rem;}
   .btn.perigo{background:var(--erro);}
   .btn.perigo:hover{background:#a03528;}
-
-  .cartao{background:var(--branco); border-radius:var(--raio); box-shadow:var(--sombra); border:1px solid var(--linha); overflow:hidden;}
-
-  table{width:100%; border-collapse:collapse; font-size:.85rem;}
+  .cartao{background:var(--branco);border-radius:var(--raio);box-shadow:var(--sombra);border:1px solid var(--linha);overflow:hidden;}
+  table{width:100%;border-collapse:collapse;font-size:.85rem;}
   thead{background:var(--lilas-suave);}
-  th{text-align:left; padding:12px 16px; color:var(--lilas-escuro); font-weight:600; font-size:.75rem; text-transform:uppercase; letter-spacing:.4px;}
-  td{padding:12px 16px; border-top:1px solid var(--linha);}
+  th{text-align:left;padding:12px 16px;color:var(--lilas-escuro);font-weight:600;font-size:.75rem;text-transform:uppercase;}
+  td{padding:12px 16px;border-top:1px solid var(--linha);}
   tbody tr:hover{background:#FBF8FE;}
-  .acoes-linha{display:flex; gap:6px;}
-
-  .badge{padding:4px 10px; border-radius:20px; font-size:.72rem; font-weight:600; display:inline-block;}
-  .badge.lobitinhos{background:#FDECE3; color:#C0622B;}
-  .badge.juniores{background:#E3F1FD; color:#2470A8;}
-  .badge.seniores{background:#EAFBEF; color:#2E8B57;}
-  .badge.caminheiros{background:#F3EAFB; color:var(--lilas-escuro);}
-  .badge.dirigentes{background:#FEF6E0; color:#A87B12;}
-  .badge.ativo{background:#EAFBEF; color:var(--ok);}
-  .badge.pendente{background:#FEF3E0; color:#B9770E;}
-  .badge.pago{background:#EAFBEF; color:var(--ok);}
-
-  .grid-secoes{display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:18px; margin-bottom:26px;}
-  .secao-card{background:var(--branco); border-radius:var(--raio); box-shadow:var(--sombra); padding:22px; border-top:5px solid var(--lilas);}
-  .secao-card.lobitinhos{border-color:#E0793A;}
-  .secao-card.juniores{border-color:#2E8FCB;}
-  .secao-card.seniores{border-color:#2E8B57;}
-  .secao-card.caminheiros{border-color:var(--lilas);}
-  .secao-card.dirigentes{border-color:var(--dourado);}
-  .secao-card h3{font-family:var(--font-display); font-size:1rem; margin-bottom:4px; color:var(--texto);}
-  .secao-card .faixa{font-family:var(--font-mono); font-size:.78rem; color:var(--texto-suave); margin-bottom:10px;}
-  .secao-card .contagem{font-size:1.8rem; font-weight:700; font-family:var(--font-display); color:var(--lilas-escuro);}
-  .secao-card .contagem span{font-size:.75rem; font-weight:400; color:var(--texto-suave); font-family:var(--font-body);}
-
-  form.formulario{background:var(--branco); border-radius:var(--raio); box-shadow:var(--sombra); padding:26px; border:1px solid var(--linha); margin-bottom:26px; display:none;}
-  form.formulario.aberto{display:grid; grid-template-columns:1fr 1fr; gap:16px;}
+  .acoes-linha{display:flex;gap:6px;}
+  .badge{padding:4px 10px;border-radius:20px;font-size:.72rem;font-weight:600;display:inline-block;}
+  .badge.ativo{background:#EAFBEF;color:var(--ok);}
+  .badge.pendente{background:#FEF3E0;color:#B9770E;}
+  .badge.pago{background:#EAFBEF;color:var(--ok);}
+  .grid-secoes{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px;margin-bottom:26px;}
+  .secao-card{background:var(--branco);border-radius:var(--raio);box-shadow:var(--sombra);padding:22px;border-top:5px solid var(--lilas);}
+  .secao-card h3{font-family:var(--font-display);font-size:1rem;margin-bottom:4px;}
+  .secao-card .contagem{font-size:1.8rem;font-weight:700;color:var(--lilas-escuro);}
+  form.formulario{background:var(--branco);border-radius:var(--raio);box-shadow:var(--sombra);padding:26px;border:1px solid var(--linha);margin-bottom:26px;display:none;}
+  form.formulario.aberto{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
   form.formulario .campo-full{grid-column:1/-1;}
-  form.formulario label{display:block; font-size:.78rem; font-weight:600; color:var(--texto-suave); margin-bottom:6px;}
-  form.formulario input, form.formulario select{
-    width:100%; padding:10px 12px; border-radius:8px; border:1.5px solid var(--linha);
-    font-family:var(--font-body); font-size:.88rem; color:var(--texto); background:#FBFAFD;
-  }
-  form.formulario input:focus, form.formulario select:focus{outline:none; border-color:var(--lilas);}
-  form.formulario input:invalid{border-color:var(--erro);}
-  form.formulario .acoes-form{grid-column:1/-1; display:flex; gap:10px; justify-content:flex-end; margin-top:6px;}
-
-  .toolbar{display:flex; gap:10px; margin-bottom:18px; flex-wrap:wrap; align-items:center;}
-  .toolbar input[type=text]{padding:9px 14px; border-radius:8px; border:1.5px solid var(--linha); font-size:.85rem; min-width:220px; background:var(--branco);}
-
-  .areas-lista{display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:16px;}
-  .area-card{background:var(--branco); border-radius:var(--raio); box-shadow:var(--sombra); padding:18px; border-left:5px solid var(--dourado);}
-  .area-card h4{font-family:var(--font-display); font-size:.92rem; color:var(--lilas-escuro); margin-bottom:6px;}
-  .area-card p{font-size:.8rem; color:var(--texto-suave); line-height:1.5;}
-
-  .resumo-financeiro{display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:16px; margin-bottom:22px;}
-  .resumo-item{background:var(--branco); border-radius:var(--raio); box-shadow:var(--sombra); padding:18px;}
-  .resumo-item .rotulo{font-size:.72rem; text-transform:uppercase; letter-spacing:.5px; color:var(--texto-suave); margin-bottom:6px;}
-  .resumo-item .valor{font-family:var(--font-display); font-size:1.4rem; color:var(--lilas-escuro); font-weight:700;}
+  form.formulario label{display:block;font-size:.78rem;font-weight:600;color:var(--texto-suave);margin-bottom:6px;}
+  form.formulario input,form.formulario select{width:100%;padding:10px 12px;border-radius:8px;border:1.5px solid var(--linha);font-size:.88rem;color:var(--texto);background:#FBFAFD;}
+  form.formulario input:focus,form.formulario select:focus{outline:0;border-color:var(--lilas);}
+  form.formulario .acoes-form{grid-column:1/-1;display:flex;gap:10px;justify-content:flex-end;margin-top:6px;}
+  .toolbar{display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap;}
+  .toolbar input{padding:9px 14px;border-radius:8px;border:1.5px solid var(--linha);font-size:.85rem;background:var(--branco);}
+  .resumo-financeiro{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-bottom:22px;}
+  .resumo-item{background:var(--branco);border-radius:var(--raio);box-shadow:var(--sombra);padding:18px;}
+  .resumo-item .rotulo{font-size:.72rem;text-transform:uppercase;color:var(--texto-suave);margin-bottom:6px;}
+  .resumo-item .valor{font-family:var(--font-display);font-size:1.4rem;color:var(--lilas-escuro);font-weight:700;}
   .resumo-item.receber .valor{color:var(--erro);}
-
-  .vazio{padding:40px; text-align:center; color:var(--texto-suave); font-size:.88rem;}
-
-  .alerta{
-    padding:12px 16px;
-    border-radius:8px;
-    margin-bottom:16px;
-    font-size:.85rem;
-    display:none;
-  }
-  .alerta.sucesso{background:#EAFBEF; color:var(--ok); border-left:4px solid var(--ok); display:block;}
-  .alerta.erro{background:#FCE3E3; color:var(--erro); border-left:4px solid var(--erro); display:block;}
-  .alerta.info{background:#E3F1FD; color:#2470A8; border-left:4px solid #2470A8; display:block;}
-
-  .modal{display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:100; align-items:center; justify-content:center;}
+  .vazio{padding:40px;text-align:center;color:var(--texto-suave);}
+  .alerta{padding:12px 16px;border-radius:8px;margin-bottom:16px;font-size:.85rem;display:none;}
+  .alerta.sucesso{background:#EAFBEF;color:var(--ok);border-left:4px solid var(--ok);display:block;}
+  .alerta.erro{background:#FCE3E3;color:var(--erro);border-left:4px solid var(--erro);display:block;}
+  .modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);z-index:100;align-items:center;justify-content:center;}
   .modal.aberto{display:flex;}
-  .modal-conteudo{background:var(--branco); border-radius:var(--raio); padding:26px; max-width:500px; width:90%; box-shadow:0 20px 60px rgba(0,0,0,0.3); max-height:90vh; overflow-y:auto;}
-  .modal-conteudo h3{font-family:var(--font-display); margin-bottom:12px; color:var(--lilas-escuro);}
-  .modal-conteudo p{font-size:.9rem; color:var(--texto-suave); margin-bottom:20px;}
-  .modal-acoes{display:flex; gap:10px; justify-content:flex-end;}
-
-  .modal-form{display:grid; grid-template-columns: 1fr 1fr; gap:12px;}
-  .modal-form .campo-full{grid-column: 1/-1;}
-  .modal-form label{display:block; font-size:.75rem; font-weight:600; color:var(--texto-suave); margin-bottom:4px;}
-  .modal-form input, .modal-form select{
-    width:100%; padding:8px 10px; border-radius:6px; border:1.5px solid var(--linha);
-    font-size:.8rem; color:var(--texto); background:#FBFAFD;
-  }
-
-  .relatorio-header{
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-    flex-wrap: wrap;
-    gap: 10px;
-  }
-
-  .relatorio-header h2{
-    font-family: var(--font-display);
-    color: var(--lilas-escuro);
-  }
-
-  .exportar-btn{
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-  }
-
-  footer.rodape{padding:24px 32px; text-align:center; font-size:.75rem; color:var(--texto-suave);}
-
-  ::placeholder{color:#B7A9C9;}
-
-  @media (max-width:920px){
-    .sidebar{transform:translateX(-100%);}
-    .sidebar.aberta{transform:translateX(0);}
-    .main{margin-left:0;}
-    .menu-toggle{display:block;}
-    form.formulario.aberto{grid-template-columns:1fr;}
-    .acoes-linha{flex-direction:column;}
-    .modal-form{grid-template-columns: 1fr;}
-  }
+  .modal-conteudo{background:var(--branco);border-radius:var(--raio);padding:26px;max-width:500px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,.3);max-height:90vh;overflow-y:auto;}
+  .modal-conteudo h3{font-family:var(--font-display);margin-bottom:12px;color:var(--lilas-escuro);}
+  .modal-acoes{display:flex;gap:10px;justify-content:flex-end;}
+  .modal-form{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  .modal-form .campo-full{grid-column:1/-1;}
+  .modal-form label{display:block;font-size:.75rem;font-weight:600;color:var(--texto-suave);margin-bottom:4px;}
+  .modal-form input,.modal-form select{width:100%;padding:8px 10px;border-radius:6px;border:1.5px solid var(--linha);font-size:.8rem;color:var(--texto);background:#FBFAFD;}
+  .exportar-btn{display:flex;gap:10px;flex-wrap:wrap;}
+  footer.rodape{padding:24px 32px;text-align:center;font-size:.75rem;color:var(--texto-suave);}
+  @media (max-width:920px){.sidebar{transform:translateX(-100%);}.sidebar.aberta{transform:translateX(0);}.main{margin-left:0;}.menu-toggle{display:block;}.modal-form{grid-template-columns:1fr;}}
 </style>
 </head>
 <body>
 
-<!-- ===================== LOGIN ===================== -->
 <div id="tela-login" class="login-container">
   <div class="login-card">
     <h1>🔐 Acesso Restrito</h1>
     <p>Sistema de Gestão Escutista - Agrupamento 97</p>
     <form onsubmit="fazerLogin(event)">
       <div class="form-group">
-        <label for="login-usuario">Utilizador</label>
+        <label>Utilizador</label>
         <input required id="login-usuario" type="text" placeholder="Utilizador">
       </div>
       <div class="form-group">
-        <label for="login-senha">Senha</label>
+        <label>Senha</label>
         <input required id="login-senha" type="password" placeholder="Senha">
       </div>
-      <p style="font-size: 0.75rem; color: var(--texto-suave); margin-bottom: 12px;">
-        Demo: utilizador: <strong>admin</strong> | senha: <strong>123456</strong>
-      </p>
-      <button type="submit" class="btn" style="width: 100%;">Entrar</button>
+      <p style="font-size:.75rem;color:var(--texto-suave);margin-bottom:12px;">Demo: <strong>admin</strong> / <strong>123456</strong></p>
+      <button type="submit" class="btn" style="width:100%;">Entrar</button>
     </form>
-    <div id="alerta-login" class="alerta" style="margin-top: 16px;"></div>
+    <div id="alerta-login" class="alerta" style="margin-top:16px;"></div>
   </div>
 </div>
 
-<!-- ===================== SIDEBAR ===================== -->
-<aside class="sidebar" id="sidebar" style="display: none;">
+<aside class="sidebar" id="sidebar" style="display:none;">
   <div class="brand">
-    <img src="https://scontent.flad7-1.fna.fbcdn.net/v/t39.30808-6/738271030_27415498748121635_5504532128612609037_n.jpg?stp=dst-jpg_tt6&cstp=mx640x640&ctp=p526x296&_nc_cat=105&ccb=1-7&_nc_sid=aa7b47&_nc_eui2=AeHB34hnlWBpqU7_Cmcp5C0gj8yVwZA1lKiPzJXBkDWUqBvWpxy_biISqmmo7dm50KVpGb4WHxClKgwvB9-ezy49&_nc_ohc=HyJKnMHNqywQ7kNvwEdNUH7&_nc_oc=AdqoWqQoJV1MtXl7leGVJEB-nX-bQ1uyghWr6pGsXnlZy8T9_RZBo6YlvmWmc9x2rwk&_nc_zt=23&_nc_ht=scontent.flad7-1.fna&_nc_gid=vizwg9Mpzp-HRnM209FUPg&_nc_ss=7c2a8&oh=00_AQAtzOxfVplOY8n6wL1E8godO55LKk8KOQVzHXQ3xhxRhw&oe=6A4DB53F" width="100%" alt="Logo do Agrupamento 97" class="logo-img">
+    <img src="https://scontent.flad7-1.fna.fbcdn.net/v/t39.30808-6/738271030_27415498748121635_5504532128612609037_n.jpg?stp=dst-jpg_tt6&cstp=mx640x640&ctp=p526x296" width="100%" alt="Logo" class="logo-img">
     <div class="brand-text">
       <div class="num">Agrupamento 97</div>
-      <div class="sub">IECA · Rev. José Belo Chipenda</div>
+      <div class="sub">IECA</div>
     </div>
   </div>
 
   <nav class="menu">
     <div class="menu-label">Principal</div>
-    <button data-page="home" class="active" aria-label="Ir para página inicial"><span class="ico">🏠</span>Início</button>
-
+    <button data-page="home" class="active"><span>🏠</span>Início</button>
     <div class="menu-label">Movimento</div>
-    <button data-page="escuteiros" aria-label="Gerir escuteiros"><span class="ico">🧭</span>Escuteiros</button>
-    <button data-page="dirigentes" aria-label="Gerir dirigentes"><span class="ico">🎖️</span>Dirigentes</button>
-    <button data-page="secoes" aria-label="Ver secções"><span class="ico">⛺</span>Secções</button>
-    <button data-page="areas" aria-label="Ver áreas de desenvolvimento"><span class="ico">🌟</span>Áreas de Desenvolvimento</button>
-
+    <button data-page="escuteiros"><span>🧭</span>Escuteiros</button>
+    <button data-page="dirigentes"><span>🎖️</span>Dirigentes</button>
+    <button data-page="secoes"><span>⛺</span>Secções</button>
     <div class="menu-label">Administração</div>
-    <button data-page="secretaria" aria-label="Cadastramento de membros"><span class="ico">🗂️</span>Secretaria</button>
-    <button data-page="tesouraria" aria-label="Gestão financeira"><span class="ico">💰</span>Tesouraria</button>
-    <button data-page="relatorios" aria-label="Ver relatórios"><span class="ico">📊</span>Relatórios</button>
+    <button data-page="secretaria"><span>🗂️</span>Secretaria</button>
+    <button data-page="tesouraria"><span>💰</span>Tesouraria</button>
+    <button data-page="relatorios"><span>📊</span>Relatórios</button>
   </nav>
 
-  <div class="user-info">
-    <div class="avatar" id="avatar-user">A</div>
-    <div class="nome" id="nome-user">Admin</div>
-  </div>
-
   <div class="sidebar-foot">
-    © 2026 Agrupamento 97 — IECA<br>Rev. José Belo Chipenda
+    © 2026 Agrupamento 97<br>
     <button class="logout-btn" onclick="fazerLogout()">🚪 Sair</button>
   </div>
 </aside>
 
-<!-- ===================== MAIN ===================== -->
-<div class="main" id="main-container" style="display: none;">
+<div class="main" id="main-container" style="display:none;">
   <div class="topbar">
-    <div style="display:flex; align-items:center; gap:12px;">
-      <button class="menu-toggle" id="menuToggle" aria-label="Abrir menu">☰</button>
+    <div style="display:flex;align-items:center;gap:12px;">
+      <button class="menu-toggle" id="menuToggle">☰</button>
       <h1 id="tituloPagina">Início</h1>
     </div>
-    <div style="display: flex; align-items: center; gap: 16px;">
-      <div class="data-hoje" id="dataHoje"></div>
-    </div>
+    <div id="dataHoje"></div>
   </div>
 
   <div class="conteudo">
 
-    <!-- ===================== HOME ===================== -->
     <section class="pagina active" id="page-home">
       <div class="hero">
-        <img src="https://scontent.flad7-1.fna.fbcdn.net/v/t39.30808-6/738271030_27415498748121635_5504532128612609037_n.jpg?stp=dst-jpg_tt6&cstp=mx640x640&ctp=p526x296&_nc_cat=105&ccb=1-7&_nc_sid=aa7b47&_nc_eui2=AeHB34hnlWBpqU7_Cmcp5C0gj8yVwZA1lKiPzJXBkDWUqBvWpxy_biISqmmo7dm50KVpGb4WHxClKgwvB9-ezy49&_nc_ohc=HyJKnMHNqywQ7kNvwEdNUH7&_nc_oc=AdqoWqQoJV1MtXl7leGVJEB-nX-bQ1uyghWr6pGsXnlZy8T9_RZBo6YlvmWmc9x2rwk&_nc_zt=23&_nc_ht=scontent.flad7-1.fna&_nc_gid=vizwg9Mpzp-HRnM209FUPg&_nc_ss=7c2a8&oh=00_AQAtzOxfVplOY8n6wL1E8godO55LKk8KOQVzHXQ3xhxRhw&oe=6A4DB53F" width="100%" alt="Logo do agrupamento" class="logo-marca">
-        <div class="eyebrow">Bem-vindo(a) ao</div>
-        <h2>Agrupamento 97 – IECA<br>Rev. José Belo Chipenda</h2>
-        <p>Um espaço de formação de caráter, fé e cidadania, acompanhando cada Escuteiro desde os Lobitinhos até aos Caminheiros. Aqui geres secções, cadastros, dirigentes e finanças do agrupamento num só lugar.</p>
-        <div class="trilha">
-          <div class="etapa">🐺 <b>2–9</b> Lobitinhos</div>
-          <div class="etapa">🧭 <b>10–13</b> Exploradores Júniores</div>
-          <div class="etapa">🏕️ <b>14–17</b> Exploradores Seniores</div>
-          <div class="etapa">🎒 <b>18–23</b> Caminheiros</div>
-        </div>
+        <img src="https://scontent.flad7-1.fna.fbcdn.net/v/t39.30808-6/738271030_27415498748121635_5504532128612609037_n.jpg?stp=dst-jpg_tt6&cstp=mx640x640&ctp=p526x296" width="100%" alt="Logo" class="logo-marca">
+        <h2>Agrupamento 97 – IECA</h2>
+        <p>Sistema de gestão completo para escuteiros, dirigentes e finanças do agrupamento.</p>
       </div>
-
       <div class="cabecalho-pagina"><h2>Atalhos rápidos</h2></div>
       <div class="atalhos">
-        <div class="atalho-card" data-page="escuteiros"><div class="ico">🧭</div><h3>Escuteiros</h3><p>Consultar e cadastrar Escuteiros de todas as secções.</p></div>
-        <div class="atalho-card" data-page="dirigentes"><div class="ico">🎖️</div><h3>Dirigentes</h3><p>Gerir os adultos responsáveis por cada secção.</p></div>
-        <div class="atalho-card" data-page="secretaria"><div class="ico">🗂️</div><h3>Secretaria</h3><p>Novo cadastramento e inscrição no movimento.</p></div>
-        <div class="atalho-card" data-page="tesouraria"><div class="ico">💰</div><h3>Tesouraria</h3><p>Inscrições, mensalidades e pagamentos de atividades.</p></div>
-        <div class="atalho-card" data-page="relatorios"><div class="ico">📊</div><h3>Relatórios</h3><p>Análise e exportação de dados financeiros.</p></div>
+        <div class="atalho-card" data-page="escuteiros"><div class="ico">🧭</div><h3>Escuteiros</h3><p>Consultar e cadastrar.</p></div>
+        <div class="atalho-card" data-page="dirigentes"><div class="ico">🎖️</div><h3>Dirigentes</h3><p>Gerir adultos responsáveis.</p></div>
+        <div class="atalho-card" data-page="secretaria"><div class="ico">🗂️</div><h3>Secretaria</h3><p>Novo cadastramento.</p></div>
+        <div class="atalho-card" data-page="tesouraria"><div class="ico">💰</div><h3>Tesouraria</h3><p>Pagamentos e inscrições.</p></div>
+        <div class="atalho-card" data-page="relatorios"><div class="ico">📊</div><h3>Relatórios</h3><p>Análise financeira.</p></div>
       </div>
     </section>
 
-    <!-- ===================== ESCUTEIROS ===================== -->
     <section class="pagina" id="page-escuteiros">
       <div id="alerta-escuteiros" class="alerta"></div>
       <div class="cabecalho-pagina">
-        <div><h2>Escuteiros</h2><p>Todos os membros do agrupamento, dos Lobitinhos aos Caminheiros.</p></div>
-        <button class="btn" onclick="toggleForm('form-escuteiro')" aria-label="Adicionar novo escuteiro">+ Novo Escuteiro</button>
+        <h2>Escuteiros</h2>
+        <button class="btn" onclick="toggleForm('form-escuteiro')">+ Novo</button>
       </div>
 
       <form class="formulario" id="form-escuteiro" onsubmit="adicionarEscuteiro(event)">
-        <div><label for="esc-nome">Nome completo</label><input required id="esc-nome" type="text" placeholder="Nome do Escuteiro"></div>
-        <div><label for="esc-nasc">Data de nascimento</label><input required id="esc-nasc" type="date"></div>
-        <div><label for="esc-enc">Encarregado de Educação</label><input required id="esc-enc" type="text" placeholder="Nome do encarregado"></div>
-        <div><label for="esc-contacto">Contacto</label><input required id="esc-contacto" type="tel" placeholder="Nº de telefone (ex: 923 111 222)"></div>
+        <div><label>Nome</label><input required id="esc-nome" type="text"></div>
+        <div><label>Nascimento</label><input required id="esc-nasc" type="date"></div>
+        <div><label>Encarregado</label><input required id="esc-enc" type="text"></div>
+        <div><label>Contacto</label><input required id="esc-contacto" type="tel"></div>
         <div class="campo-full acoes-form">
           <button type="button" class="btn secundario" onclick="toggleForm('form-escuteiro')">Cancelar</button>
-          <button type="submit" class="btn dourado">Guardar Escuteiro</button>
+          <button type="submit" class="btn dourado">Guardar</button>
         </div>
       </form>
 
       <div class="toolbar">
-        <input type="text" id="filtro-escuteiro" placeholder="Pesquisar por nome..." oninput="renderEscuteiros()">
+        <input type="text" id="filtro-escuteiro" placeholder="Pesquisar..." oninput="renderEscuteiros()">
         <select id="filtro-secao-escuteiro" onchange="renderEscuteiros()">
-          <option value="">Todas as secções</option>
+          <option value="">Todas</option>
           <option value="Lobitinhos">Lobitinhos</option>
-          <option value="Exploradores Júniores">Exploradores Júniores</option>
-          <option value="Exploradores Seniores">Exploradores Seniores</option>
+          <option value="Exploradores Júniores">Júniores</option>
+          <option value="Exploradores Seniores">Seniores</option>
           <option value="Caminheiros">Caminheiros</option>
         </select>
       </div>
@@ -562,39 +217,21 @@
       </div>
     </section>
 
-    <!-- ===================== DIRIGENTES ===================== -->
     <section class="pagina" id="page-dirigentes">
       <div id="alerta-dirigentes" class="alerta"></div>
       <div class="cabecalho-pagina">
-        <div><h2>Dirigentes</h2><p>Adultos responsáveis por acompanhar os Escuteiros em cada secção.</p></div>
-        <button class="btn" onclick="toggleForm('form-dirigente')" aria-label="Adicionar novo dirigente">+ Novo Dirigente</button>
+        <h2>Dirigentes</h2>
+        <button class="btn" onclick="toggleForm('form-dirigente')">+ Novo</button>
       </div>
 
       <form class="formulario" id="form-dirigente" onsubmit="adicionarDirigente(event)">
-        <div><label for="dir-nome">Nome completo</label><input required id="dir-nome" type="text" placeholder="Nome do dirigente"></div>
-        <div><label for="dir-funcao">Função</label>
-          <select required id="dir-funcao">
-            <option value="Chefe de Secção">Chefe de Secção</option>
-            <option value="Subchefe">Subchefe</option>
-            <option value="Capelão">Capelão</option>
-            <option value="Chefe de Agrupamento">Chefe de Agrupamento</option>
-            <option value="Secretário(a)">Secretário(a)</option>
-            <option value="Tesoureiro(a)">Tesoureiro(a)</option>
-          </select>
-        </div>
-        <div><label for="dir-secao">Secção que acompanha</label>
-          <select required id="dir-secao">
-            <option value="Lobitinhos">Lobitinhos</option>
-            <option value="Exploradores Júniores">Exploradores Júniores</option>
-            <option value="Exploradores Seniores">Exploradores Seniores</option>
-            <option value="Caminheiros">Caminheiros</option>
-            <option value="Agrupamento">Agrupamento (todas)</option>
-          </select>
-        </div>
-        <div><label for="dir-contacto">Contacto</label><input required id="dir-contacto" type="tel" placeholder="Nº de telefone"></div>
+        <div><label>Nome</label><input required id="dir-nome" type="text"></div>
+        <div><label>Função</label><select required id="dir-funcao"><option>Chefe de Secção</option><option>Subchefe</option><option>Capelão</option></select></div>
+        <div><label>Secção</label><select required id="dir-secao"><option>Lobitinhos</option><option>Exploradores Júniores</option><option>Exploradores Seniores</option><option>Caminheiros</option></select></div>
+        <div><label>Contacto</label><input required id="dir-contacto" type="tel"></div>
         <div class="campo-full acoes-form">
           <button type="button" class="btn secundario" onclick="toggleForm('form-dirigente')">Cancelar</button>
-          <button type="submit" class="btn dourado">Guardar Dirigente</button>
+          <button type="submit" class="btn dourado">Guardar</button>
         </div>
       </form>
 
@@ -606,90 +243,58 @@
       </div>
     </section>
 
-    <!-- ===================== SECÇÕES ===================== -->
     <section class="pagina" id="page-secoes">
-      <div class="cabecalho-pagina"><div><h2>Secções</h2><p>Estrutura etária do agrupamento — cada Escuteiro é automaticamente enquadrado pela idade.</p></div></div>
+      <div class="cabecalho-pagina"><h2>Secções</h2></div>
       <div class="grid-secoes" id="grid-secoes"></div>
     </section>
 
-    <!-- ===================== ÁREAS DE DESENVOLVIMENTO ===================== -->
-    <section class="pagina" id="page-areas">
-      <div class="cabecalho-pagina">
-        <div><h2>Áreas de Desenvolvimento Escutista</h2><p>Substituem as antigas "Disciplinas" — as dimensões trabalhadas com os Escuteiros em cada etapa.</p></div>
-      </div>
-      <div class="areas-lista">
-        <div class="area-card"><h4>🕊️ Espiritual</h4><p>Formação de fé e valores cristãos, alinhados à missão da IECA.</p></div>
-        <div class="area-card"><h4>💪 Físico</h4><p>Saúde, vida ao ar livre e desenvolvimento corporal.</p></div>
-        <div class="area-card"><h4>📚 Intelectual</h4><p>Curiosidade, resolução de problemas e aprendizagem contínua.</p></div>
-        <div class="area-card"><h4>❤️ Afetivo</h4><p>Equilíbrio emocional e relações saudáveis.</p></div>
-        <div class="area-card"><h4>🤝 Social</h4><p>Trabalho em equipa, serviço comunitário e cidadania.</p></div>
-        <div class="area-card"><h4>🧭 Caráter</h4><p>Responsabilidade, honestidade e autodisciplina, guiadas pela Lei do Escuteiro.</p></div>
-      </div>
-    </section>
-
-    <!-- ===================== SECRETARIA ===================== -->
     <section class="pagina" id="page-secretaria">
       <div id="alerta-secretaria" class="alerta"></div>
-      <div class="cabecalho-pagina"><div><h2>Secretaria</h2><p>Cadastramento e inscrição de novos membros no movimento.</p></div></div>
+      <div class="cabecalho-pagina"><h2>Secretaria</h2></div>
 
       <form class="formulario aberto" id="form-secretaria" onsubmit="cadastrarNovoMembro(event)">
-        <div><label for="sec-nome">Nome completo</label><input required id="sec-nome" type="text" placeholder="Nome completo"></div>
-        <div><label for="sec-nasc">Data de nascimento</label><input required id="sec-nasc" type="date"></div>
-        <div><label for="sec-tipo">Tipo de membro</label>
-          <select id="sec-tipo" onchange="alternarCamposSecretaria()">
-            <option value="escuteiro">Escuteiro</option>
-            <option value="dirigente">Dirigente</option>
-          </select>
-        </div>
-        <div id="sec-campo-enc"><label for="sec-enc">Encarregado de Educação</label><input id="sec-enc" type="text" placeholder="Nome do encarregado"></div>
-        <div><label for="sec-contacto">Contacto</label><input required id="sec-contacto" type="tel" placeholder="Nº de telefone"></div>
-        <div><label for="sec-doc">Bilhete de Identidade / Cédula</label><input id="sec-doc" type="text" placeholder="Nº do documento"></div>
+        <div><label>Nome</label><input required id="sec-nome" type="text"></div>
+        <div><label>Nascimento</label><input required id="sec-nasc" type="date"></div>
+        <div><label>Tipo</label><select id="sec-tipo" onchange="alternarCamposSecretaria()"><option value="escuteiro">Escuteiro</option><option value="dirigente">Dirigente</option></select></div>
+        <div id="sec-campo-enc"><label>Encarregado</label><input id="sec-enc" type="text"></div>
+        <div><label>Contacto</label><input required id="sec-contacto" type="tel"></div>
+        <div><label>Bilhete</label><input id="sec-doc" type="text"></div>
         <div class="campo-full acoes-form">
           <button type="reset" class="btn secundario">Limpar</button>
-          <button type="submit" class="btn dourado">Concluir Cadastramento</button>
+          <button type="submit" class="btn dourado">Concluir</button>
         </div>
       </form>
 
       <div class="cartao">
         <table>
-          <thead><tr><th>Nome</th><th>Tipo</th><th>Idade / Secção</th><th>Contacto</th><th>Data de cadastro</th></tr></thead>
+          <thead><tr><th>Nome</th><th>Tipo</th><th>Idade</th><th>Contacto</th><th>Data</th></tr></thead>
           <tbody id="tabela-cadastros"></tbody>
         </table>
       </div>
     </section>
 
-    <!-- ===================== TESOURARIA ===================== -->
     <section class="pagina" id="page-tesouraria">
       <div id="alerta-tesouraria" class="alerta"></div>
       <div class="cabecalho-pagina">
-        <div><h2>Tesouraria</h2><p>Inscrições, mensalidades e pagamentos de atividades do agrupamento.</p></div>
-        <button class="btn" onclick="toggleForm('form-pagamento')" aria-label="Adicionar novo pagamento">+ Novo Pagamento</button>
+        <h2>Tesouraria</h2>
+        <button class="btn" onclick="toggleForm('form-pagamento')">+ Novo</button>
       </div>
 
       <div class="resumo-financeiro">
-        <div class="resumo-item"><div class="rotulo">Total recebido</div><div class="valor" id="res-recebido">0 Kz</div></div>
+        <div class="resumo-item"><div class="rotulo">Recebido</div><div class="valor" id="res-recebido">0 Kz</div></div>
         <div class="resumo-item receber"><div class="rotulo">Pendente</div><div class="valor" id="res-pendente">0 Kz</div></div>
-        <div class="resumo-item"><div class="rotulo">Nº de lançamentos</div><div class="valor" id="res-total">0</div></div>
+        <div class="resumo-item"><div class="rotulo">Lançamentos</div><div class="valor" id="res-total">0</div></div>
       </div>
 
       <form class="formulario" id="form-pagamento" onsubmit="adicionarPagamento(event)">
-        <div><label for="pag-nome">Nome</label><input required id="pag-nome" type="text" placeholder="Escuteiro / Dirigente"></div>
-        <div><label for="pag-tipo">Tipo de pagamento</label>
-          <select id="pag-tipo">
-            <option>Inscrição no Movimento</option>
-            <option>Mensalidade</option>
-            <option>Atividade / Acampamento</option>
-            <option>Uniforme</option>
-          </select>
-        </div>
-        <div><label for="pag-valor">Valor (Kz)</label><input required id="pag-valor" type="number" min="0" placeholder="0"></div>
-        <div><label for="pag-data">Data</label><input required id="pag-data" type="date"></div>
-        <div><label for="pag-estado">Estado</label>
-          <select id="pag-estado"><option value="Pago">Pago</option><option value="Pendente">Pendente</option></select>
-        </div>
+        <div><label>Nome</label><input required id="pag-nome" type="text"></div>
+        <div><label>Tipo</label><select id="pag-tipo"><option>Inscrição</option><option>Mensalidade</option><option>Atividade</option><option>Uniforme</option></select></div>
+        <div><label>Valor (Kz)</label><input required id="pag-valor" type="number" min="0"></div>
+        <div><label>Data</label><input required id="pag-data" type="date"></div>
+        <div><label>Estado</label><select id="pag-estado"><option value="Pago">Pago</option><option value="Pendente">Pendente</option></select></div>
         <div class="campo-full acoes-form">
           <button type="button" class="btn secundario" onclick="toggleForm('form-pagamento')">Cancelar</button>
-          <button type="submit" class="btn dourado">Registar Pagamento</button>
+          <button type="submit" class="btn dourado">Registar</button>
         </div>
       </form>
 
@@ -701,55 +306,40 @@
       </div>
     </section>
 
-    <!-- ===================== RELATÓRIOS ===================== -->
     <section class="pagina" id="page-relatorios">
-      <div class="cabecalho-pagina">
-        <div><h2>Relatórios Financeiros</h2><p>Análise detalhada de receitas, despesas e tendências do agrupamento.</p></div>
-      </div>
+      <div class="cabecalho-pagina"><h2>Relatórios Financeiros</h2></div>
 
-      <div style="background: var(--branco); border-radius: var(--raio); padding: 20px; box-shadow: var(--sombra); margin-bottom: 24px;">
-        <div class="relatorio-header">
+      <div style="background:var(--branco);border-radius:var(--raio);padding:20px;box-shadow:var(--sombra);margin-bottom:24px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:10px;">
           <div>
-            <h3 style="margin-bottom: 4px; font-family: var(--font-display); color: var(--lilas-escuro);">Resumo Financeiro</h3>
-            <p style="font-size: 0.8rem; color: var(--texto-suave);">Período: últimos 30 dias</p>
+            <h3 style="margin-bottom:4px;font-family:var(--font-display);color:var(--lilas-escuro);">Resumo</h3>
+            <p style="font-size:.8rem;color:var(--texto-suave);">Últimos 30 dias</p>
           </div>
           <div class="exportar-btn">
-            <button class="btn dourado pequeno" onclick="exportarPDF()">📄 Exportar PDF</button>
-            <button class="btn pequeno" onclick="exportarCSV()">📊 Exportar CSV</button>
+            <button class="btn dourado pequeno" onclick="exportarPDF()">📄 PDF</button>
+            <button class="btn pequeno" onclick="exportarCSV()">📊 CSV</button>
           </div>
         </div>
 
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px;">
-          <div class="resumo-item">
-            <div class="rotulo">Total Recebido</div>
-            <div class="valor" id="rel-recebido">0 Kz</div>
-          </div>
-          <div class="resumo-item receber">
-            <div class="rotulo">Total Pendente</div>
-            <div class="valor" id="rel-pendente">0 Kz</div>
-          </div>
-          <div class="resumo-item">
-            <div class="rotulo">Taxa de Cobrança</div>
-            <div class="valor" id="rel-taxa">0%</div>
-          </div>
-          <div class="resumo-item">
-            <div class="rotulo">Número de Transações</div>
-            <div class="valor" id="rel-transacoes">0</div>
-          </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:24px;">
+          <div class="resumo-item"><div class="rotulo">Recebido</div><div class="valor" id="rel-recebido">0 Kz</div></div>
+          <div class="resumo-item receber"><div class="rotulo">Pendente</div><div class="valor" id="rel-pendente">0 Kz</div></div>
+          <div class="resumo-item"><div class="rotulo">Taxa</div><div class="valor" id="rel-taxa">0%</div></div>
+          <div class="resumo-item"><div class="rotulo">Transações</div><div class="valor" id="rel-transacoes">0</div></div>
         </div>
 
-        <h3 style="font-family: var(--font-display); color: var(--lilas-escuro); margin: 24px 0 16px;">Receitas por Tipo</h3>
+        <h3 style="font-family:var(--font-display);color:var(--lilas-escuro);margin:24px 0 16px;">Receitas</h3>
         <div class="cartao">
           <table>
-            <thead><tr><th>Tipo de Pagamento</th><th>Quantidade</th><th>Valor Total</th><th>Percentagem</th></tr></thead>
+            <thead><tr><th>Tipo</th><th>Quantidade</th><th>Valor</th><th>%</th></tr></thead>
             <tbody id="tabela-receitas-tipo"></tbody>
           </table>
         </div>
 
-        <h3 style="font-family: var(--font-display); color: var(--lilas-escuro); margin: 24px 0 16px;">Devedores (Pendente)</h3>
+        <h3 style="font-family:var(--font-display);color:var(--lilas-escuro);margin:24px 0 16px;">Devedores</h3>
         <div class="cartao">
           <table>
-            <thead><tr><th>Nome</th><th>Tipo</th><th>Valor Devido</th><th>Data Vencimento</th></tr></thead>
+            <thead><tr><th>Nome</th><th>Tipo</th><th>Valor</th><th>Data</th></tr></thead>
             <tbody id="tabela-devedores"></tbody>
           </table>
         </div>
@@ -758,16 +348,13 @@
 
   </div>
 
-  <footer class="rodape">Agrupamento 97 · IECA — Rev. José Belo Chipenda &nbsp;|&nbsp; Sistema de Gestão Escutista</footer>
+  <footer class="rodape">Agrupamento 97 · IECA | Sistema de Gestão Escutista</footer>
 </div>
 
-<!-- ===================== MODAIS ===================== -->
-
-<!-- Modal de confirmação de eliminação -->
 <div class="modal" id="modal-confirmar">
   <div class="modal-conteudo">
     <h3>Confirmar eliminação</h3>
-    <p id="modal-texto">Tem a certeza que deseja eliminar este registo?</p>
+    <p id="modal-texto">Tem a certeza?</p>
     <div class="modal-acoes">
       <button class="btn secundario" onclick="fecharModal()">Cancelar</button>
       <button class="btn perigo" onclick="confirmarEliminacao()">Eliminar</button>
@@ -775,15 +362,14 @@
   </div>
 </div>
 
-<!-- Modal de edição -->
 <div class="modal" id="modal-editar">
   <div class="modal-conteudo">
-    <h3 id="modal-editar-titulo">Editar Registo</h3>
+    <h3 id="modal-editar-titulo">Editar</h3>
     <form class="modal-form" id="form-editar-modal" onsubmit="salvarEdicao(event)">
       <div id="campos-editar"></div>
       <div class="modal-acoes">
         <button type="button" class="btn secundario" onclick="fecharModalEditar()">Cancelar</button>
-        <button type="submit" class="btn dourado">Guardar Alterações</button>
+        <button type="submit" class="btn dourado">Guardar</button>
       </div>
     </form>
   </div>
